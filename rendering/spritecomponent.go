@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-const SpriteComponentType = 2
+var SpriteComponentType = fission.NextComponentType()
 
 type SpriteComponent struct {
 	sprite sfml.Sprite

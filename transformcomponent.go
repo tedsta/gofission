@@ -4,7 +4,7 @@ import (
 	"github.com/tedsta/go-sfml"
 )
 
-const TransformComponentType = 1
+var TransformComponentType = NextComponentType()
 
 type TransformComponent struct {
 	Position sfml.Vector2f
