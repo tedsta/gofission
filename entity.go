@@ -4,39 +4,39 @@ package fission
 
 // An abstract object in the scene that contains components
 type Entity struct {
-	id         int         // Unique id of this entity
-	components []Component // Components this entity contains
-	typeBits   int         // The combined type bits of the components
+	id         int           // Unique id of this entity
+	components [][]Component // Store components in a table based on their type
+	typeBits   TypeBits      // The combined type bits of the components
 }
 
 // AddComponent adds a component to the entity
 func (this *Entity) AddComponent(c Component) {
-	this.components = append(this.components, c)
+	bitIndex := bitIndex(c.TypeBits())
+	if bitIndex >= len(this.components) { // Check if we have enough room
+		// Resize the component table accordingly
+		this.components = append(this.components, make([]Component,
+			bitIndex-len(this.components)))
+	}
+
+	this.components[bitIndex] = append(this.components[bitIndex], c)
 	this.typeBits &= c.TypeBits()
 }
 
-// GetComponent gets a component attached to this entity by type
-// cmpType is the type of component to get
-func (this *Entity) GetComponent(cmpType int) Component {
-	for _, c := range this.components {
-		if c.TypeBits() == cmpType {
-			return c
-		}
+// Component gets the first component attached to this entity with the
+// specified type
+func (this *Entity) Component(typeBits TypeBits) Component {
+	// No space in table for the component - that means it doesn't exist
+	if bitIndex(typeBits) >= len(this.components) ||
+		len(this.components[bitIndex(typeBits)]) == 0 {
+		return nil
 	}
-	return nil
+	return this.components[bitIndex(typeBits)][0]
 }
 
-// GetComponents maps slices of components of the same type to their
-// corresponding type bits.
-// typeBits specifies which component types to map
-func (this *Entity) GetComponents(typeBits int) map[int][]Component {
-	cmpMap := make(map[int][]Component)
-	for _, c := range this.components {
-		if c.TypeBits()&typeBits == c.TypeBits() {
-			cmpMap[c.TypeBits()] = append(cmpMap[c.TypeBits()], c)
-		}
-	}
-	return cmpMap
+// Components returns a slice of all the components in this entity with the
+// specified type
+func (this *Entity) Components(typeBits TypeBits) []Component {
+	return this.components[bitIndex(typeBits)]
 }
 
 // Serialize serializes the entity into a packet
@@ -64,4 +64,16 @@ type entityEvent struct {
 
 func (this *entityEvent) Type() int {
 	return this.eventType
+}
+
+// util ########################################################################
+
+// bitIndex returns the index of a single set bit in an integer
+func bitIndex(val TypeBits) int {
+	index := 0
+	shift := func(i *TypeBits) TypeBits { *i >>= 1; return *i }
+	for shift(&val) > 0 {
+		index++
+	}
+	return index
 }

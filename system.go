@@ -4,12 +4,12 @@ type System interface {
 	Begin(dt float32)
 	ProcessEntity(e *Entity, dt float32)
 	End(dt float32)
-	TypeBits() int
+	TypeBits() TypeBits
 }
 
 type ActiveEntities struct {
 	Entities []*Entity
-	typeBits int
+	typeBits TypeBits
 }
 
 func (this *ActiveEntities) HandleEvent(event Event) {

@@ -4,6 +4,7 @@ import (
 	"github.com/tedsta/go-sfml"
 )
 
+// The type bits for TransformComponent
 var TransformComponentType = NextComponentType()
 
 type TransformComponent struct {
@@ -22,6 +23,6 @@ func (this *TransformComponent) Serialize() {
 func (this *TransformComponent) Deserialize() {
 }
 
-func (this *TransformComponent) TypeBits() int {
+func (this *TransformComponent) TypeBits() TypeBits {
 	return TransformComponentType
 }

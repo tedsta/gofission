@@ -1,10 +1,12 @@
 package rendering
 
 import (
+	"fission"
 	"github.com/tedsta/go-sfml"
 	"log"
 )
 
+// The type bits for SpriteComponent
 var SpriteComponentType = fission.NextComponentType()
 
 type SpriteComponent struct {
@@ -38,6 +40,6 @@ func (this *SpriteComponent) Render(window sfml.RenderWindow, pos sfml.Vector2f)
 	window.DrawSpriteDefault(this.sprite)
 }
 
-func (this *SpriteComponent) TypeBits() int {
+func (this *SpriteComponent) TypeBits() fission.TypeBits {
 	return SpriteComponentType
 }
