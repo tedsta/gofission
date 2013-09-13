@@ -24,7 +24,12 @@ func NewSpriteComponent(fileName string) *SpriteComponent {
 		log.Fatal(err)
 	}
 
+	sizeX, sizeY := texture.Size()
+	halfX := float32(sizeX / 2)
+	halfY := float32(sizeY / 2)
+
 	spr.SetTexture(texture, false)
+	spr.SetOrigin(halfX, halfY)
 	return &SpriteComponent{spr}
 }
 

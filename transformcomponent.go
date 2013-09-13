@@ -8,9 +8,9 @@ import (
 var TransformComponentType = NextComponentType()
 
 type TransformComponent struct {
-	Position sfml.Vector2f
-	Rotation float32
-	Scale    float32
+	Pos   sfml.Vector2f
+	Rot   float32
+	Scale float32
 }
 
 func NewTransformComponent() *TransformComponent {

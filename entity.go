@@ -19,7 +19,7 @@ func (this *Entity) AddComponent(c Component) {
 	}
 
 	this.components[bitIndex] = append(this.components[bitIndex], c)
-	this.typeBits &= c.TypeBits()
+	this.typeBits |= c.TypeBits()
 }
 
 // Component gets the first component attached to this entity with the
