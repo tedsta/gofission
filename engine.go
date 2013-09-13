@@ -14,11 +14,11 @@ func NewEngine() *Engine {
 }
 
 // Update updates all of the attached systems
-func (this *Engine) Update(dt float32) {
-	for _, sys := range this.systems {
+func (e *Engine) Update(dt float32) {
+	for _, sys := range e.systems {
 		sys.Begin(dt)
 		// TODO: Fix this :(
-		for ent := this.scene.BeginEnt(); ent != nil; ent = this.scene.NextEntity() {
+		for ent := e.scene.BeginEnt(); ent != nil; ent = e.scene.NextEntity() {
 			sys.ProcessEntity(ent, dt)
 		}
 		sys.End(dt)
@@ -26,11 +26,11 @@ func (this *Engine) Update(dt float32) {
 }
 
 // AddSystem adds a new system
-func (this *Engine) AddSystem(s System) {
-	this.systems = append(this.systems, s)
+func (e *Engine) AddSystem(sys System) {
+	e.systems = append(e.systems, sys)
 }
 
 // Scene returns the engine's scene
-func (this *Engine) Scene() *Scene {
-	return this.scene
+func (e *Engine) Scene() *Scene {
+	return e.scene
 }

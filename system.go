@@ -12,9 +12,9 @@ type ActiveEntities struct {
 	typeBits TypeBits
 }
 
-func (this *ActiveEntities) HandleEvent(event Event) {
+func (a *ActiveEntities) HandleEvent(event Event) {
 	entity := event.(*entityEvent).Ent
-	if entity.typeBits&this.typeBits == this.typeBits {
-		this.Entities = append(this.Entities, entity)
+	if entity.typeBits&a.typeBits == a.typeBits {
+		a.Entities = append(a.Entities, entity)
 	}
 }

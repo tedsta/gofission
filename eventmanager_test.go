@@ -8,7 +8,7 @@ type TestEvent struct {
 	myNum int
 }
 
-func (this *TestEvent) Type() int {
+func (t *TestEvent) Type() int {
 	return 0
 }
 
@@ -16,11 +16,11 @@ type TestEventHandler struct {
 	ch chan bool
 }
 
-func (this *TestEventHandler) HandleEvent(event Event) {
+func (t *TestEventHandler) HandleEvent(event Event) {
 	if test, ok := event.(*TestEvent); ok && test.myNum == 42 {
-		this.ch <- true
+		t.ch <- true
 	} else {
-		this.ch <- false
+		t.ch <- false
 	}
 }
 

@@ -17,12 +17,12 @@ func NewTransformComponent() *TransformComponent {
 	return &TransformComponent{sfml.NewVector2f(0, 0), 0, 1.0}
 }
 
-func (this *TransformComponent) Serialize() {
+func (t *TransformComponent) Serialize() {
 }
 
-func (this *TransformComponent) Deserialize() {
+func (t *TransformComponent) Deserialize() {
 }
 
-func (this *TransformComponent) TypeBits() TypeBits {
+func (t *TransformComponent) TypeBits() TypeBits {
 	return TransformComponentType
 }

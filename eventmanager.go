@@ -20,16 +20,16 @@ func NewEventManager(eventCount int) *EventManager {
 }
 
 // AddHandler adds an event handler for a particular event type
-func (this *EventManager) AddHandler(eventType int, handler EventHandler) {
+func (e *EventManager) AddHandler(eventType int, handler EventHandler) {
 	// Make sure it's a valid event type
-	if eventType < int(len(this.receivers)) {
-		this.receivers[eventType] = append(this.receivers[eventType], handler)
+	if eventType < int(len(e.receivers)) {
+		e.receivers[eventType] = append(e.receivers[eventType], handler)
 	}
 }
 
 // FireEvent fires an event to all receivers receiving
-func (this *EventManager) FireEvent(event Event) {
-	for _, receiver := range this.receivers[event.Type()] {
+func (e *EventManager) FireEvent(event Event) {
+	for _, receiver := range e.receivers[event.Type()] {
 		go receiver.HandleEvent(event) // Why wait for events to get handled?
 	}
 }

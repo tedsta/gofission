@@ -10,48 +10,48 @@ type Entity struct {
 }
 
 // AddComponent adds a component to the entity
-func (this *Entity) AddComponent(c Component) {
+func (e *Entity) AddComponent(c Component) {
 	bitIndex := bitIndex(c.TypeBits())
-	if bitIndex >= len(this.components) { // Check if we have enough room
+	if bitIndex >= len(e.components) { // Check if we have enough room
 		// Resize the component table accordingly
-		this.components = append(this.components, make([]Component,
-			bitIndex-len(this.components)))
+		e.components = append(e.components, make([]Component,
+			bitIndex-len(e.components)))
 	}
 
-	this.components[bitIndex] = append(this.components[bitIndex], c)
-	this.typeBits |= c.TypeBits()
+	e.components[bitIndex] = append(e.components[bitIndex], c)
+	e.typeBits |= c.TypeBits()
 }
 
 // Component gets the first component attached to this entity with the
 // specified type
-func (this *Entity) Component(typeBits TypeBits) Component {
+func (e *Entity) Component(typeBits TypeBits) Component {
 	// No space in table for the component - that means it doesn't exist
-	if bitIndex(typeBits) >= len(this.components) ||
-		len(this.components[bitIndex(typeBits)]) == 0 {
+	if bitIndex(typeBits) >= len(e.components) ||
+		len(e.components[bitIndex(typeBits)]) == 0 {
 		return nil
 	}
-	return this.components[bitIndex(typeBits)][0]
+	return e.components[bitIndex(typeBits)][0]
 }
 
 // Components returns a slice of all the components in this entity with the
 // specified type
-func (this *Entity) Components(typeBits TypeBits) []Component {
-	return this.components[bitIndex(typeBits)]
+func (e *Entity) Components(typeBits TypeBits) []Component {
+	return e.components[bitIndex(typeBits)]
 }
 
 // Serialize serializes the entity into a packet
-func (this *Entity) Serialize() {
+func (e *Entity) Serialize() {
 	// TODO: Implement this
 }
 
 // Deserialize deserializes the entity from a packet
-func (this *Entity) Deserialize() {
+func (e *Entity) Deserialize() {
 	// TODO: Implement this
 }
 
 // Id returns the id of the entity
-func (this *Entity) Id() int {
-	return this.id
+func (e *Entity) Id() int {
+	return e.id
 }
 
 // entityEvent #################################################################
@@ -62,8 +62,8 @@ type entityEvent struct {
 	Ent       *Entity // The entity this event is referring to
 }
 
-func (this *entityEvent) Type() int {
-	return this.eventType
+func (e *entityEvent) Type() int {
+	return e.eventType
 }
 
 // util ########################################################################

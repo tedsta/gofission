@@ -21,33 +21,33 @@ func NewRenderSystem(winTitle string) *RenderSystem {
 	return &RenderSystem{w, sfml.NewVector2f(0, 0), 0, 1, w.DefaultView()}
 }
 
-func (this *RenderSystem) Begin(dt float32) {
-	this.Window.Drain()
-	this.Window.Clear(sfml.FromRGB(0, 0, 0))
+func (r *RenderSystem) Begin(dt float32) {
+	r.Window.Drain()
+	r.Window.Clear(sfml.FromRGB(0, 0, 0))
 
-	this.view.SetCenter(this.CamPos.X()*Ptu, -this.CamPos.Y()*Ptu)
-	this.view.SetRotation(-this.CamRot)
-	this.view.Zoom(this.CamZoom)
-	this.Window.SetView(this.view)
+	r.view.SetCenter(r.CamPos.X()*Ptu, -r.CamPos.Y()*Ptu)
+	r.view.SetRotation(-r.CamRot)
+	r.view.Zoom(r.CamZoom)
+	r.Window.SetView(r.view)
 }
 
-func (this *RenderSystem) ProcessEntity(e *fission.Entity, dt float32) {
+func (r *RenderSystem) ProcessEntity(e *fission.Entity, dt float32) {
 	transform := e.Component(fission.TransformComponentType).(*fission.TransformComponent)
 	pos := sfml.NewVector2f(transform.Pos.X()*Ptu, -transform.Pos.Y()*Ptu)
 
 	renderCmpnts := e.Components(SpriteComponentType)
 	for _, cmpnt := range renderCmpnts {
-		cmpnt.(RenderComponent).Render(this.Window, pos, transform.Rot, transform.Scale)
+		cmpnt.(RenderComponent).Render(r.Window, pos, transform.Rot, transform.Scale)
 	}
 }
 
-func (this *RenderSystem) End(dt float32) {
-	this.Window.Display()
+func (r *RenderSystem) End(dt float32) {
+	r.Window.Display()
 
-	this.view = this.Window.DefaultView()
-	this.Window.SetView(this.view)
+	r.view = r.Window.DefaultView()
+	r.Window.SetView(r.view)
 }
 
-func (this *RenderSystem) TypeBits() fission.TypeBits {
+func (r *RenderSystem) TypeBits() fission.TypeBits {
 	return fission.TransformComponentType | SpriteComponentType
 }

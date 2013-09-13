@@ -10,12 +10,12 @@ type Scene struct {
 	nextIndex int // Used for iterating through the scene's entities
 }
 
-func (this *Scene) AddEntity(ent *Entity) {
-	this.entities = append(this.entities, ent)
+func (s *Scene) AddEntity(ent *Entity) {
+	s.entities = append(s.entities, ent)
 }
 
-func (this *Scene) FindEntity(id int) *Entity {
-	for _, ent := range this.entities {
+func (s *Scene) FindEntity(id int) *Entity {
+	for _, ent := range s.entities {
 		if ent.id == id {
 			return ent
 		}
@@ -23,38 +23,38 @@ func (this *Scene) FindEntity(id int) *Entity {
 	return nil
 }
 
-func (this *Scene) RemoveEntity(id int) {
-	for i, ent := range this.entities {
+func (s *Scene) RemoveEntity(id int) {
+	for i, ent := range s.entities {
 		if ent.id == id {
-			this.entities[i] = this.entities[len(this.entities)-1]
-			this.entities = this.entities[:len(this.entities)-2]
+			s.entities[i] = s.entities[len(s.entities)-1]
+			s.entities = s.entities[:len(s.entities)-2]
 			return
 		}
 	}
 }
 
-func (this *Scene) Save(fileName string) {
+func (s *Scene) Save(fileName string) {
 
 }
 
-func (this *Scene) Load(fileName string) {
+func (s *Scene) Load(fileName string) {
 
 }
 
 // BeginEntities initializes an iteration through the entities in a scene
-func (this *Scene) BeginEnt() *Entity {
-	this.nextIndex = 0
-	if len(this.entities) > 0 {
-		return this.entities[this.nextIndex]
+func (s *Scene) BeginEnt() *Entity {
+	s.nextIndex = 0
+	if len(s.entities) > 0 {
+		return s.entities[s.nextIndex]
 	}
 	return nil
 }
 
 // NextEntity returns the next entity when iterating through the entities
-func (this *Scene) NextEntity() *Entity {
-	if int(len(this.entities)) > this.nextIndex+1 {
-		this.nextIndex++
-		return this.entities[this.nextIndex]
+func (s *Scene) NextEntity() *Entity {
+	if int(len(s.entities)) > s.nextIndex+1 {
+		s.nextIndex++
+		return s.entities[s.nextIndex]
 	}
 	return nil
 }

@@ -33,20 +33,20 @@ func NewSpriteComponent(fileName string) *SpriteComponent {
 	return &SpriteComponent{spr}
 }
 
-func (this *SpriteComponent) Serialize() {
+func (s *SpriteComponent) Serialize() {
 }
 
-func (this *SpriteComponent) Deserialize() {
+func (s *SpriteComponent) Deserialize() {
 
 }
 
-func (this *SpriteComponent) Render(window sfml.RenderWindow, pos sfml.Vector2f, rot, scale float32) {
-	this.sprite.SetPosition(pos.X(), pos.Y())
-	this.sprite.SetRotation(-rot) // SFML rotations go clockwise, not trigwise
-	this.sprite.SetScale(scale, scale)
-	window.DrawSpriteDefault(this.sprite)
+func (s *SpriteComponent) Render(window sfml.RenderWindow, pos sfml.Vector2f, rot, scale float32) {
+	s.sprite.SetPosition(pos.X(), pos.Y())
+	s.sprite.SetRotation(-rot) // SFML rotations go clockwise, not trigwise
+	s.sprite.SetScale(scale, scale)
+	window.DrawSpriteDefault(s.sprite)
 }
 
-func (this *SpriteComponent) TypeBits() fission.TypeBits {
+func (s *SpriteComponent) TypeBits() fission.TypeBits {
 	return SpriteComponentType
 }
