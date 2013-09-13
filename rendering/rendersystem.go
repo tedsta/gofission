@@ -37,7 +37,7 @@ func (this *RenderSystem) ProcessEntity(e *fission.Entity, dt float32) {
 
 	renderCmpnts := e.Components(SpriteComponentType)
 	for _, cmpnt := range renderCmpnts {
-		cmpnt.(RenderComponent).Render(this.Window, pos)
+		cmpnt.(RenderComponent).Render(this.Window, pos, transform.Rot, transform.Scale)
 	}
 }
 

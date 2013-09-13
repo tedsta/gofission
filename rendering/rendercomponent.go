@@ -7,5 +7,5 @@ import (
 
 type RenderComponent interface {
 	fission.Component
-	Render(window sfml.RenderWindow, pos sfml.Vector2f)
+	Render(window sfml.RenderWindow, pos sfml.Vector2f, rot, scale float32)
 }

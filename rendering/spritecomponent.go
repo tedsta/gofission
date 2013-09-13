@@ -40,8 +40,10 @@ func (this *SpriteComponent) Deserialize() {
 
 }
 
-func (this *SpriteComponent) Render(window sfml.RenderWindow, pos sfml.Vector2f) {
+func (this *SpriteComponent) Render(window sfml.RenderWindow, pos sfml.Vector2f, rot, scale float32) {
 	this.sprite.SetPosition(pos.X(), pos.Y())
+	this.sprite.SetRotation(-rot) // SFML rotations go clockwise, not trigwise
+	this.sprite.SetScale(scale, scale)
 	window.DrawSpriteDefault(this.sprite)
 }
 
