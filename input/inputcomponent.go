@@ -1,9 +1,12 @@
-package fission
+package input
 
 import (
 	"fission"
 	"github.com/tedsta/go-sfml"
 )
 
-type InputComponent struct {
+type InputComponent interface {
+	fission.Component
+	OnKeyPressed(key sfml.KeyCode)
+	OnKeyReleased(key sfml.KeyCode)
 }

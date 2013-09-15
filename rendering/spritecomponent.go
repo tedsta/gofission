@@ -1,4 +1,4 @@
-package rendering
+package rend
 
 import (
 	"fission"
@@ -40,11 +40,11 @@ func (s *SpriteComponent) Deserialize() {
 
 }
 
-func (s *SpriteComponent) Render(window sfml.RenderWindow, pos sfml.Vector2f, rot, scale float32) {
+func (s *SpriteComponent) Render(win sfml.RenderWindow, pos sfml.Vector2f, rot, scale float32) {
 	s.sprite.SetPosition(pos.X(), pos.Y())
 	s.sprite.SetRotation(-rot) // SFML rotations go clockwise, not trigwise
 	s.sprite.SetScale(scale, scale)
-	window.DrawSpriteDefault(s.sprite)
+	win.DrawSpriteDefault(s.sprite)
 }
 
 func (s *SpriteComponent) TypeBits() fission.TypeBits {

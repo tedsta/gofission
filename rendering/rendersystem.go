@@ -1,4 +1,4 @@
-package rendering
+package rend
 
 import (
 	"fission"

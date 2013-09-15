@@ -1,4 +1,4 @@
-package rendering
+package rend
 
 import (
 	"fission"
@@ -7,5 +7,5 @@ import (
 
 type RenderComponent interface {
 	fission.Component
-	Render(window sfml.RenderWindow, pos sfml.Vector2f, rot, scale float32)
+	Render(win sfml.RenderWindow, pos sfml.Vector2f, rot, scale float32)
 }
