@@ -17,13 +17,13 @@ const (
 )
 
 type InputSystem struct {
-	window    *sfml.Window
+	window    *sfml.RenderWindow
 	keyStates [sfml.KeyCount]BtnState
 	events    []interface{}
-	typeBits  fission.TypeBits
+	typeBits  fission.TypeBits // Extra type bits for custom input components
 }
 
-func NewInputSystem(win *sfml.Window, typeBits fission.TypeBits) *InputSystem {
+func NewInputSystem(win *sfml.RenderWindow, typeBits fission.TypeBits) *InputSystem {
 	return &InputSystem{win, [sfml.KeyCount]BtnState{}, nil, typeBits}
 }
 
@@ -31,19 +31,18 @@ func (i *InputSystem) Begin(dt float32) {
 	// Initialize the slice of events
 	i.events = make([]interface{}, 0, 1)
 
-	var e interface{}
-	ok := true
-	for ok {
-		e, ok = i.window.PollEvent()
-		switch e.(type) {
-		default:
-			i.events = append(i.events, e)
+	for {
+		e, ok := i.window.PollEvent()
+		if !ok {
+			break
 		}
+
+		i.events = append(i.events, e)
 	}
 }
 
 func (i *InputSystem) ProcessEntity(e *fission.Entity, dt float32) {
-	cmpnts := e.Components(i.typeBits) // Grab all of the input components
+	cmpnts := e.Components(i.TypeBits()) // Grab all of the input components
 
 	// Convert the components to input components
 	inputCmpnts := make([]InputComponent, len(cmpnts))
@@ -72,5 +71,5 @@ func (i *InputSystem) End(dt float32) {
 }
 
 func (i *InputSystem) TypeBits() fission.TypeBits {
-	return i.typeBits
+	return IntentComponentType | i.typeBits
 }
