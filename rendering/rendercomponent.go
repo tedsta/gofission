@@ -1,11 +1,10 @@
 package rend
 
 import (
-	"fission"
-	"github.com/tedsta/go-sfml"
+	"fission/core"
 )
 
 type RenderComponent interface {
-	fission.Component
-	Render(win sfml.RenderWindow, pos sfml.Vector2f, rot, scale float32)
+	core.Component
+	Render(pos *core.Vector2, rot, scale float32)
 }

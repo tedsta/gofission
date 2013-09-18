@@ -1,8 +1,9 @@
 package input
 
 import (
-	"fission"
-	"github.com/tedsta/go-sfml"
+	"fission/core"
+	"fmt"
+	glfw "github.com/go-gl/glfw3"
 )
 
 // Type for button states
@@ -17,31 +18,26 @@ const (
 )
 
 type InputSystem struct {
-	window    *sfml.RenderWindow
-	keyStates [sfml.KeyCount]BtnState
-	events    []interface{}
-	typeBits  fission.TypeBits // Extra type bits for custom input components
+	window    *glfw.Window
+	keyStates [glfw.KeyLast]BtnState
+	typeBits  core.TypeBits // Extra type bits for custom input components
 }
 
-func NewInputSystem(win *sfml.RenderWindow, typeBits fission.TypeBits) *InputSystem {
-	return &InputSystem{win, [sfml.KeyCount]BtnState{}, nil, typeBits}
+func NewInputSystem(w *glfw.Window, typeBits core.TypeBits) *InputSystem {
+	// Set the input callbacks
+	w.SetFramebufferSizeCallback(onResize)
+	w.SetMouseButtonCallback(onMouseBtn)
+	//w.SetMouseWheelCallback(onMouseWheel)
+	w.SetKeyCallback(onKey)
+	w.SetCharacterCallback(onChar)
+	return &InputSystem{w, [glfw.KeyLast]BtnState{}, typeBits}
 }
 
 func (i *InputSystem) Begin(dt float32) {
-	// Initialize the slice of events
-	i.events = make([]interface{}, 0, 1)
-
-	for {
-		e, ok := i.window.PollEvent()
-		if !ok {
-			break
-		}
-
-		i.events = append(i.events, e)
-	}
+	glfw.PollEvents()
 }
 
-func (i *InputSystem) ProcessEntity(e *fission.Entity, dt float32) {
+func (i *InputSystem) ProcessEntity(e *core.Entity, dt float32) {
 	cmpnts := e.Components(i.TypeBits()) // Grab all of the input components
 
 	// Convert the components to input components
@@ -50,26 +46,35 @@ func (i *InputSystem) ProcessEntity(e *fission.Entity, dt float32) {
 		inputCmpnts[i] = cmpnt.(InputComponent)
 	}
 
-	// Send the events to all of the input components
-	for _, event := range i.events {
-		for _, cmpnt := range inputCmpnts {
-			switch event.(type) {
-			// Keyboard event
-			case sfml.KeyEvent:
-				evt := event.(sfml.KeyEvent)
-				if evt.Type == sfml.EvtKeyPressed {
-					cmpnt.OnKeyPressed(evt.Code())
-				} else if evt.Type == sfml.EvtKeyReleased {
-					cmpnt.OnKeyReleased(evt.Code())
-				}
-			}
-		}
-	}
+	/*for _, cmpnt := range inputCmpnts {
+	}*/
 }
 
 func (i *InputSystem) End(dt float32) {
 }
 
-func (i *InputSystem) TypeBits() fission.TypeBits {
+func (i *InputSystem) TypeBits() core.TypeBits {
 	return IntentComponentType | i.typeBits
+}
+
+// Callbacks ###################################################################
+
+func onResize(wnd *glfw.Window, w, h int) {
+	fmt.Printf("resized: %dx%d\n", w, h)
+}
+
+func onMouseBtn(w *glfw.Window, btn glfw.MouseButton, act glfw.Action, mod glfw.ModifierKey) {
+	fmt.Printf("mouse button: %d, %d\n", btn, act)
+}
+
+func onMouseWheel(w *glfw.Window, delta int) {
+	fmt.Printf("mouse wheel: %d\n", delta)
+}
+
+func onKey(w *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
+	fmt.Printf("key: %d, %d, %d\n", key, action, mods)
+}
+
+func onChar(w *glfw.Window, key uint) {
+	fmt.Printf("char: %d\n", key)
 }

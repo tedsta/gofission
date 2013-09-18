@@ -1,12 +1,12 @@
 package input
 
 import (
-	"fission"
-	"github.com/tedsta/go-sfml"
+	"fission/core"
+	glfw "github.com/go-gl/glfw3"
 )
 
 type InputComponent interface {
-	fission.Component
-	OnKeyPressed(key sfml.KeyCode)
-	OnKeyReleased(key sfml.KeyCode)
+	core.Component
+	OnKeyPressed(key glfw.Key)
+	OnKeyReleased(key glfw.Key)
 }

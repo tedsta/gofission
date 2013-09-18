@@ -1,4 +1,4 @@
-package fission
+package core
 
 var NextEventId int
 

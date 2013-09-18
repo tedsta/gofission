@@ -1,4 +1,4 @@
-package fission
+package core
 
 // A framework to manage and update systems
 type Engine struct {

@@ -1,20 +1,16 @@
-package fission
-
-import (
-	"github.com/tedsta/go-sfml"
-)
+package core
 
 // The type bits for TransformComponent
 var TransformComponentType = NextComponentType()
 
 type TransformComponent struct {
-	Pos   sfml.Vector2f
+	Pos   *Vector2
 	Rot   float32
 	Scale float32
 }
 
 func NewTransformComponent() *TransformComponent {
-	return &TransformComponent{sfml.NewVector2f(0, 0), 0, 1.0}
+	return &TransformComponent{&Vector2{}, 0, 1.0}
 }
 
 func (t *TransformComponent) Serialize() {

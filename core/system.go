@@ -1,4 +1,4 @@
-package fission
+package core
 
 type System interface {
 	Begin(dt float32)

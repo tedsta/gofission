@@ -1,6 +1,4 @@
-package fission
-
-import "log"
+package core
 
 // A type for component type bits
 type TypeBits int64
@@ -11,7 +9,7 @@ var regCmpntCount uint = 0
 // Registers a new component type and returns the proper type bits
 func NextComponentType() TypeBits {
 	if regCmpntCount >= 64 { // Dat stack overflow doe...
-		log.Fatal("Cannot have more than 64 component types.")
+		panic("Cannot have more than 64 component types.")
 	}
 	defer func() { regCmpntCount++ }()
 	return 1 << regCmpntCount
