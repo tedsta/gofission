@@ -1,8 +1,8 @@
 package input
 
 import (
-	"fission/core"
 	glfw "github.com/go-gl/glfw3"
+	"github.com/tedsta/fission/core"
 )
 
 var IntentComponentType = core.NextComponentType()

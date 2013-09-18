@@ -1,9 +1,9 @@
 package rend
 
 import (
-	"fission/core"
 	"github.com/go-gl/gl"
 	glfw "github.com/go-gl/glfw3"
+	"github.com/tedsta/fission/core"
 )
 
 const Ptu = 32.0

@@ -1,9 +1,9 @@
 package input
 
 import (
-	"fission/core"
 	"fmt"
 	glfw "github.com/go-gl/glfw3"
+	"github.com/tedsta/fission/core"
 )
 
 // Type for button states

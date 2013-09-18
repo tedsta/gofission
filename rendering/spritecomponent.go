@@ -1,7 +1,7 @@
 package rend
 
 import (
-	"fission/core"
+	"github.com/tedsta/fission/core"
 	//glfw "github.com/go-gl/glfw3"
 )
 
