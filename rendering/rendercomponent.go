@@ -6,5 +6,5 @@ import (
 
 type RenderComponent interface {
 	core.Component
-	Render(pos *core.Vector2, rot, scale float32)
+	Render(t *RenderTarget, states RenderStates, pos Vector2, rot, scale float32)
 }

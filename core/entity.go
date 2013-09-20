@@ -14,8 +14,9 @@ func (e *Entity) AddComponent(c Component) {
 	bitIndex := bitIndex(c.TypeBits())
 	if bitIndex >= len(e.components) { // Check if we have enough room
 		// Resize the component table accordingly
-		e.components = append(e.components, make([]Component,
-			bitIndex-len(e.components)))
+		newCmpnts := make([][]Component, bitIndex+1)
+		copy(newCmpnts, e.components)
+		e.components = newCmpnts
 	}
 
 	e.components[bitIndex] = append(e.components[bitIndex], c)

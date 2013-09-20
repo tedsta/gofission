@@ -10,7 +10,8 @@ const Ptu = 32.0
 
 type RenderSystem struct {
 	Window   *glfw.Window
-	CamPos   *core.Vector2
+	Target   *RenderTarget
+	CamPos   Vector2
 	CamRot   float32
 	CamScale float32
 	typeBits core.TypeBits
@@ -21,9 +22,11 @@ func NewRenderSystem(winTitle string, typeBits core.TypeBits) *RenderSystem {
 	if err != nil {
 		panic(err)
 	}
-
 	w.MakeContextCurrent()
-	return &RenderSystem{w, &core.Vector2{}, 0, 1, typeBits}
+
+	rt := NewRenderTarget()
+
+	return &RenderSystem{w, rt, Vector2{}, 0, 1, typeBits}
 }
 
 func (r *RenderSystem) Begin(dt float32) {
@@ -31,16 +34,18 @@ func (r *RenderSystem) Begin(dt float32) {
 }
 
 func (r *RenderSystem) ProcessEntity(e *core.Entity, dt float32) {
-	trans := e.Component(core.TransformComponentType).(*core.TransformComponent)
-	pos := &core.Vector2{trans.Pos.X, -trans.Pos.Y}
-	pos.Mult(Ptu)
+	trans := e.Component(TransformComponentType).(*TransformComponent)
+	pos := Vector2{trans.Pos.X, -trans.Pos.Y}
+	pos = pos.Mult(Ptu)
 
 	rot := trans.Rot - r.CamRot
 	scale := trans.Scale * r.CamScale
 
+	rs := RenderStates{BlendAlpha, IdentityTransform(), nil}
+
 	renderCmpnts := e.Components(SpriteComponentType | r.typeBits)
 	for _, cmpnt := range renderCmpnts {
-		cmpnt.(RenderComponent).Render(pos, rot, scale)
+		cmpnt.(RenderComponent).Render(r.Target, rs, pos, rot, scale)
 	}
 }
 
@@ -49,5 +54,5 @@ func (r *RenderSystem) End(dt float32) {
 }
 
 func (r *RenderSystem) TypeBits() core.TypeBits {
-	return core.TransformComponentType | SpriteComponentType | r.typeBits
+	return TransformComponentType | SpriteComponentType | r.typeBits
 }
