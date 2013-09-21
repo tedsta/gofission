@@ -109,7 +109,7 @@ func (r *RenderTarget) Render(verts []Vertex, primType PrimitiveType, states Ren
 		// Pre-transform the vertices and store them into the vertex cache
 		for i := 0; i < len(verts); i++ {
 			r.vertexCache[i].Pos = states.transform.TransformPoint(verts[i].Pos)
-			//r.vertexCache[i].Col = verts[i].Col
+			r.vertexCache[i].Color = verts[i].Color
 			r.vertexCache[i].TexCoords = verts[i].TexCoords
 		}
 
@@ -168,6 +168,8 @@ func (r *RenderTarget) Render(verts []Vertex, primType PrimitiveType, states Ren
 
 		for i, _ := range verts {
 			gl.TexCoord2f(verts[i].TexCoords.X, verts[i].TexCoords.Y)
+			gl.Color4f(verts[i].Color.R/255, verts[i].Color.G/255,
+				verts[i].Color.B/255, verts[i].Color.A/255)
 			gl.Vertex2f(verts[i].Pos.X, verts[i].Pos.Y)
 		}
 

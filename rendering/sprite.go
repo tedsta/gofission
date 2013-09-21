@@ -10,6 +10,7 @@ type Sprite struct {
 func NewSprite(t *Texture) *Sprite {
 	spr := &Sprite{}
 	spr.SetTexture(t)
+	spr.SetColor(Color{255, 255, 255, 255})
 	//spr.T = NewTransformable()
 
 	return spr
@@ -32,6 +33,13 @@ func (s *Sprite) SetRect(rect Rect) {
 		s.updatePositions()
 		s.updateTexCoords()
 	}
+}
+
+func (s *Sprite) SetColor(Color Color) {
+	s.verts[0].Color = Color
+	s.verts[1].Color = Color
+	s.verts[2].Color = Color
+	s.verts[3].Color = Color
 }
 
 func (s *Sprite) updatePositions() {
