@@ -2,17 +2,18 @@ package rend
 
 import (
 	"github.com/tedsta/fission/core"
+	"github.com/tedsta/gosfml"
 )
 
 // The type bits for TransformComponent
 var TransformComponentType = core.NextComponentType()
 
 type TransformComponent struct {
-	T *Transformable
+	T *sf.Transformable
 }
 
 func NewTransformComponent() *TransformComponent {
-	return &TransformComponent{NewTransformable()}
+	return &TransformComponent{sf.NewTransformable()}
 }
 
 func (t *TransformComponent) Serialize() {

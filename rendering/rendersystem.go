@@ -4,13 +4,14 @@ import (
 	"github.com/go-gl/gl"
 	glfw "github.com/go-gl/glfw3"
 	"github.com/tedsta/fission/core"
+	"github.com/tedsta/gosfml"
 )
 
 const Ptu = 32.0
 
 type RenderSystem struct {
 	Window   *glfw.Window
-	Target   *RenderTarget
+	Target   *sf.RenderTarget
 	typeBits core.TypeBits
 }
 
@@ -21,7 +22,7 @@ func NewRenderSystem(winTitle string, typeBits core.TypeBits) *RenderSystem {
 	}
 	w.MakeContextCurrent()
 
-	rt := NewRenderTarget()
+	rt := sf.NewRenderTarget()
 
 	return &RenderSystem{w, rt, typeBits}
 }
@@ -33,7 +34,7 @@ func (r *RenderSystem) Begin(dt float32) {
 func (r *RenderSystem) ProcessEntity(e *core.Entity, dt float32) {
 	trans := e.Component(TransformComponentType).(*TransformComponent)
 
-	rs := RenderStates{BlendAlpha, trans.T.Transform(), nil}
+	rs := sf.RenderStates{sf.BlendAlpha, trans.T.Transform(), nil}
 
 	renderCmpnts := e.Components(SpriteComponentType | r.typeBits)
 	for _, cmpnt := range renderCmpnts {
