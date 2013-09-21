@@ -11,9 +11,6 @@ const Ptu = 32.0
 type RenderSystem struct {
 	Window   *glfw.Window
 	Target   *RenderTarget
-	CamPos   Vector2
-	CamRot   float32
-	CamScale float32
 	typeBits core.TypeBits
 }
 
@@ -26,7 +23,7 @@ func NewRenderSystem(winTitle string, typeBits core.TypeBits) *RenderSystem {
 
 	rt := NewRenderTarget()
 
-	return &RenderSystem{w, rt, Vector2{}, 0, 1, typeBits}
+	return &RenderSystem{w, rt, typeBits}
 }
 
 func (r *RenderSystem) Begin(dt float32) {
@@ -35,17 +32,12 @@ func (r *RenderSystem) Begin(dt float32) {
 
 func (r *RenderSystem) ProcessEntity(e *core.Entity, dt float32) {
 	trans := e.Component(TransformComponentType).(*TransformComponent)
-	pos := Vector2{trans.Pos.X, -trans.Pos.Y}
-	pos = pos.Mult(Ptu)
 
-	rot := trans.Rot - r.CamRot
-	scale := trans.Scale * r.CamScale
-
-	rs := RenderStates{BlendAlpha, IdentityTransform(), nil}
+	rs := RenderStates{BlendAlpha, trans.T.Transform(), nil}
 
 	renderCmpnts := e.Components(SpriteComponentType | r.typeBits)
 	for _, cmpnt := range renderCmpnts {
-		cmpnt.(RenderComponent).Render(r.Target, rs, pos, rot, scale)
+		cmpnt.(RenderComponent).Render(r.Target, rs)
 	}
 }
 

@@ -103,7 +103,8 @@ func (r *RenderTarget) Render(verts []Vertex, primType PrimitiveType, states Ren
 	}
 
 	// Check if the vertex count is low enough so that we can pre-transform them
-	useVertexCache := len(verts) <= vertexCacheSize
+	// TODO: Fix vertex cache
+	useVertexCache := /*len(verts) <= vertexCacheSize*/ false
 	if useVertexCache {
 		// Pre-transform the vertices and store them into the vertex cache
 		for i := 0; i < len(verts); i++ {
@@ -151,7 +152,7 @@ func (r *RenderTarget) Render(verts []Vertex, primType PrimitiveType, states Ren
 		if !r.useVertexCache {
 			verts = r.vertexCache[:]
 		} else {
-			//verts = nil
+			verts = nil
 		}
 	}
 

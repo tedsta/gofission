@@ -25,6 +25,7 @@ func (s *SpriteComponent) TypeBits() core.TypeBits {
 	return SpriteComponentType
 }
 
-func (s *SpriteComponent) Render(t *RenderTarget, states RenderStates, pos Vector2, rot, scale float32) {
+func (s *SpriteComponent) Render(t *RenderTarget, states RenderStates) {
+	//states.transform.Combine(transform)
 	s.sprite.Render(t, states)
 }

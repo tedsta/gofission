@@ -8,13 +8,11 @@ import (
 var TransformComponentType = core.NextComponentType()
 
 type TransformComponent struct {
-	Pos   Vector2
-	Rot   float32
-	Scale float32
+	T *Transformable
 }
 
 func NewTransformComponent() *TransformComponent {
-	return &TransformComponent{Vector2{}, 0, 1.0}
+	return &TransformComponent{NewTransformable()}
 }
 
 func (t *TransformComponent) Serialize() {

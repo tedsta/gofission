@@ -4,17 +4,20 @@ type Sprite struct {
 	texture *Texture
 	rect    Rect
 	verts   [4]Vertex
+	//T       *Transformable // TODO? This is a workaround since we can't inherit.
 }
 
 func NewSprite(t *Texture) *Sprite {
 	spr := &Sprite{}
 	spr.SetTexture(t)
+	//spr.T = NewTransformable()
 
 	return spr
 }
 
 func (s *Sprite) Render(t *RenderTarget, states RenderStates) {
 	states.texture = s.texture
+	//states.transform.Combine(s.T.Transform())
 	t.Render(s.verts[:], Quads, states)
 }
 

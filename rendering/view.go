@@ -47,6 +47,9 @@ func (v *View) SetRotation(angle float32) {
 	for v.rot >= 360 {
 		v.rot -= 360
 	}
+	for v.rot < 0 {
+		v.rot += 360
+	}
 
 	v.transformUpdated = false
 	v.invTransformUpdated = false

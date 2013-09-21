@@ -9,7 +9,7 @@ type TestEvent struct {
 	ch    chan bool
 }
 
-func (t *TestEvent) Type() int {
+func (t *TestEvent) Type() EventType {
 	return 0
 }
 
@@ -26,7 +26,7 @@ func (t *TestEventHandler) HandleEvent(event Event) {
 
 func TestEventManager(t *testing.T) {
 	ch := make(chan bool)
-	eventManager := NewEventManager(1)
+	eventManager := &EventManager{}
 	testHandler := &TestEventHandler{}
 	eventManager.AddHandler(0, testHandler)
 	go eventManager.FireEvent(&TestEvent{42, ch})

@@ -18,19 +18,28 @@ const (
 )
 
 type InputSystem struct {
-	window    *glfw.Window
-	keyStates [glfw.KeyLast]BtnState
-	typeBits  core.TypeBits // Extra type bits for custom input components
+	eventManager *core.EventManager
+	window       *glfw.Window
+	keyStates    [glfw.KeyLast]BtnState
+	typeBits     core.TypeBits // Extra type bits for custom input components
 }
 
-func NewInputSystem(w *glfw.Window, typeBits core.TypeBits) *InputSystem {
+func NewInputSystem(w *glfw.Window, e *core.EventManager, typeBits core.TypeBits) *InputSystem {
+	i := &InputSystem{}
+
 	// Set the input callbacks
-	w.SetFramebufferSizeCallback(onResize)
-	w.SetMouseButtonCallback(onMouseBtn)
-	//w.SetMouseWheelCallback(onMouseWheel)
-	w.SetKeyCallback(onKey)
-	w.SetCharacterCallback(onChar)
-	return &InputSystem{w, [glfw.KeyLast]BtnState{}, typeBits}
+	w.SetFramebufferSizeCallback((i).onResize)
+	w.SetMouseButtonCallback((i).onMouseBtn)
+	//w.SetMouseWheelCallback((i).onMouseWheel)
+	w.SetKeyCallback((i).onKey)
+	w.SetCharacterCallback((i).onChar)
+
+	i.window = w
+	i.eventManager = e
+	i.keyStates = [glfw.KeyLast]BtnState{}
+	i.typeBits = typeBits
+
+	return i
 }
 
 func (i *InputSystem) Begin(dt float32) {
@@ -59,22 +68,23 @@ func (i *InputSystem) TypeBits() core.TypeBits {
 
 // Callbacks ###################################################################
 
-func onResize(wnd *glfw.Window, w, h int) {
+func (i *InputSystem) onResize(wnd *glfw.Window, w, h int) {
 	fmt.Printf("resized: %dx%d\n", w, h)
 }
 
-func onMouseBtn(w *glfw.Window, btn glfw.MouseButton, act glfw.Action, mod glfw.ModifierKey) {
+func (i *InputSystem) onMouseBtn(w *glfw.Window, btn glfw.MouseButton, act glfw.Action, mod glfw.ModifierKey) {
 	fmt.Printf("mouse button: %d, %d\n", btn, act)
 }
 
-func onMouseWheel(w *glfw.Window, delta int) {
+func (i *InputSystem) onMouseWheel(w *glfw.Window, delta int) {
 	fmt.Printf("mouse wheel: %d\n", delta)
 }
 
-func onKey(w *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
-	fmt.Printf("key: %d, %d, %d\n", key, action, mods)
+func (i *InputSystem) onKey(w *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
+	e := &KeyEvent{key, scancode, action, mods}
+	i.eventManager.FireEvent(e)
 }
 
-func onChar(w *glfw.Window, key uint) {
+func (i *InputSystem) onChar(w *glfw.Window, key uint) {
 	fmt.Printf("char: %d\n", key)
 }

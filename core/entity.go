@@ -59,11 +59,11 @@ func (e *Entity) Id() int {
 
 // An event type for entity events.
 type entityEvent struct {
-	eventType int     // There can be more than one type of entity event
-	Ent       *Entity // The entity this event is referring to
+	eventType EventType // There can be more than one type of entity event
+	Ent       *Entity   // The entity this event is referring to
 }
 
-func (e *entityEvent) Type() int {
+func (e *entityEvent) Type() EventType {
 	return e.eventType
 }
 
