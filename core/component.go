@@ -11,6 +11,7 @@ func NextComponentType() TypeBits {
 	if regCmpntCount >= 64 { // Dat stack overflow doe...
 		panic("Cannot have more than 64 component types.")
 	}
+
 	defer func() { regCmpntCount++ }()
 	return 1 << regCmpntCount
 }

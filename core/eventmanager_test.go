@@ -6,6 +6,7 @@ import (
 
 type TestEvent struct {
 	myNum int
+	ch    chan bool
 }
 
 func (t *TestEvent) Type() int {
@@ -13,23 +14,23 @@ func (t *TestEvent) Type() int {
 }
 
 type TestEventHandler struct {
-	ch chan bool
 }
 
 func (t *TestEventHandler) HandleEvent(event Event) {
 	if test, ok := event.(*TestEvent); ok && test.myNum == 42 {
-		t.ch <- true
+		event.(*TestEvent).ch <- true
 	} else {
-		t.ch <- false
+		event.(*TestEvent).ch <- false
 	}
 }
 
 func TestEventManager(t *testing.T) {
+	ch := make(chan bool)
 	eventManager := NewEventManager(1)
-	testHandler := &TestEventHandler{make(chan bool)}
+	testHandler := &TestEventHandler{}
 	eventManager.AddHandler(0, testHandler)
-	eventManager.FireEvent(&TestEvent{42})
-	if !<-testHandler.ch {
+	go eventManager.FireEvent(&TestEvent{42, ch})
+	if !<-ch {
 		t.Fail()
 	}
 }
