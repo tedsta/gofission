@@ -3,14 +3,15 @@ package input
 import (
 	glfw "github.com/go-gl/glfw3"
 	"github.com/tedsta/fission/core"
+	"github.com/tedsta/fission/core/event"
 )
 
 type InputSystem struct {
-	eventManager *core.EventManager
+	eventManager *event.Manager
 	window       *glfw.Window
 }
 
-func NewInputSystem(w *glfw.Window, e *core.EventManager) *InputSystem {
+func NewInputSystem(w *glfw.Window, e *event.Manager) *InputSystem {
 	i := &InputSystem{}
 
 	// Set the input callbacks

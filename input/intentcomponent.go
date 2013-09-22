@@ -2,6 +2,7 @@ package input
 
 import (
 	"github.com/tedsta/fission/core"
+	"github.com/tedsta/fission/core/event"
 )
 
 var IntentComponentType = core.NextComponentType()
@@ -28,14 +29,16 @@ func (i *IntentComponent) IntentActive(intent string) bool {
 	return i.intents[intent]
 }
 
-func (i *IntentComponent) HandleEvent(e core.Event) {
-	switch e.Type() {
-	case KeyEventType:
-		ke := e.(*KeyEvent)
-		if ke.Action == Press {
-			i.intents[i.keyMap[uint(ke.Key)]] = true
-		} else if ke.Action == Release {
-			i.intents[i.keyMap[uint(ke.Key)]] = false
+func (i *IntentComponent) Listen(ch chan event.Event) {
+	for e := range ch {
+		switch e.Type() {
+		case KeyEventType:
+			ke := e.(*KeyEvent)
+			if ke.Action == Press {
+				i.intents[i.keyMap[uint(ke.Key)]] = true
+			} else if ke.Action == Release {
+				i.intents[i.keyMap[uint(ke.Key)]] = false
+			}
 		}
 	}
 }

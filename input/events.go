@@ -1,11 +1,11 @@
 package input
 
 import (
-	"github.com/tedsta/fission/core"
+	"github.com/tedsta/fission/core/event"
 )
 
 // KeyEvent ####################################################################
-var KeyEventType = core.NextEventId()
+var KeyEventType = event.NextId()
 
 type KeyEvent struct {
 	Key      Key
@@ -14,6 +14,6 @@ type KeyEvent struct {
 	Mods     ModifierKey
 }
 
-func (k *KeyEvent) Type() core.EventType {
+func (k *KeyEvent) Type() event.Type {
 	return KeyEventType
 }

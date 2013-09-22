@@ -1,9 +1,13 @@
 package core
 
+import (
+	"github.com/tedsta/fission/core/event"
+)
+
 // A framework to manage and update systems
 type Engine struct {
 	Scene        *Scene
-	EventManager *EventManager
+	EventManager *event.Manager
 	systems      []System
 }
 
@@ -11,7 +15,7 @@ type Engine struct {
 func NewEngine() *Engine {
 	engine := &Engine{}
 	engine.Scene = &Scene{}
-	engine.EventManager = &EventManager{}
+	engine.EventManager = &event.Manager{}
 	return engine
 }
 

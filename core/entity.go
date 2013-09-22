@@ -1,5 +1,9 @@
 package core
 
+import (
+	"github.com/tedsta/fission/core/event"
+)
+
 // Entity ######################################################################
 
 // An abstract object in the scene that contains components
@@ -49,11 +53,11 @@ func (e *Entity) Id() int {
 
 // An event type for entity events.
 type entityEvent struct {
-	eventType EventType // There can be more than one type of entity event
-	Ent       *Entity   // The entity this event is referring to
+	eventType event.Type // There can be more than one type of entity event
+	Ent       *Entity    // The entity this event is referring to
 }
 
-func (e *entityEvent) Type() EventType {
+func (e *entityEvent) Type() event.Type {
 	return e.eventType
 }
 
