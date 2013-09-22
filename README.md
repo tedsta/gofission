@@ -1,4 +1,5 @@
 Theodore DeRego
+
 2013
 
 fission
@@ -36,6 +37,7 @@ Dependencies
 ============
 
 go get github.com/go-gl/gl
+
 go get github.com/go-gl/glfw3
 
 Core
