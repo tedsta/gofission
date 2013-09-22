@@ -17,7 +17,5 @@ func NextComponentType() TypeBits {
 }
 
 type Component interface {
-	Serialize()
-	Deserialize()
 	TypeBits() TypeBits
 }

@@ -16,12 +16,6 @@ func NewTransformComponent() *TransformComponent {
 	return &TransformComponent{sf.NewTransformable()}
 }
 
-func (t *TransformComponent) Serialize() {
-}
-
-func (t *TransformComponent) Deserialize() {
-}
-
 func (t *TransformComponent) TypeBits() core.TypeBits {
 	return TransformComponentType
 }

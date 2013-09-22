@@ -17,13 +17,6 @@ func NewIntentComponent() *IntentComponent {
 	return &IntentComponent{[glfw.KeyLast]string{}, intents}
 }
 
-func (i *IntentComponent) Serialize() {
-}
-
-func (i *IntentComponent) Deserialize() {
-
-}
-
 func (i *IntentComponent) TypeBits() core.TypeBits {
 	return IntentComponentType
 }

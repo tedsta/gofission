@@ -16,6 +16,11 @@ type RenderSystem struct {
 }
 
 func NewRenderSystem(winTitle string, typeBits core.TypeBits) *RenderSystem {
+	if !glfw.Init() {
+		panic("Can't init glfw!")
+	}
+	gl.Init()
+
 	w, err := glfw.CreateWindow(800, 600, winTitle, nil, nil)
 	if err != nil {
 		panic(err)
