@@ -1,3 +1,6 @@
+Theodore DeRego
+2013
+
 fission
 =======
 
@@ -28,3 +31,19 @@ Note: For now, most of these are unimplemented, but I implement things pretty fa
  - Rendering (sprites, spritesheets, shapes)
  - All sorts of input (keyboard, mouse, joystick, etc.?)
  - Easy networking for all of your multiplayer games
+
+Dependencies
+============
+
+go get github.com/go-gl/gl
+go get github.com/go-gl/glfw3
+
+Core
+ - Just the Go standard lib :)
+
+Input
+ - GLFW3
+
+Rendering
+ - GLFW3
+ - GL
