@@ -40,16 +40,6 @@ func (e *Entity) Components(typeBits TypeBits) []Component {
 	return e.components[bitIndex(typeBits)]
 }
 
-// Serialize serializes the entity into a packet
-func (e *Entity) Serialize() {
-	// TODO: Implement this
-}
-
-// Deserialize deserializes the entity from a packet
-func (e *Entity) Deserialize() {
-	// TODO: Implement this
-}
-
 // Id returns the id of the entity
 func (e *Entity) Id() int {
 	return e.id

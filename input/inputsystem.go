@@ -55,7 +55,7 @@ func (i *InputSystem) onMouseWheel(w *glfw.Window, delta int) {
 }
 
 func (i *InputSystem) onKey(w *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
-	e := &KeyEvent{key, scancode, action, mods}
+	e := &KeyEvent{Key(key), scancode, Action(action), ModifierKey(mods)}
 	i.eventManager.FireEvent(e)
 }
 
