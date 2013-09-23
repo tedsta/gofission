@@ -41,7 +41,12 @@ func (e *Entity) Component(typeBits TypeBits) Component {
 // Components returns a slice of all the components in this entity with the
 // specified type
 func (e *Entity) Components(typeBits TypeBits) []Component {
-	return e.components[bitIndex(typeBits)]
+	cmpnts := []Component{}
+	indices := bitIndices(typeBits)
+	for _, i := range indices {
+		cmpnts = append(cmpnts, e.components[i]...)
+	}
+	return cmpnts
 }
 
 // Id returns the id of the entity
@@ -75,4 +80,17 @@ func bitIndex(val TypeBits) int {
 		index++
 	}
 	return index
+}
+
+// bitIndices returns a slice of all the set bit indices
+func bitIndices(val TypeBits) []uint8 {
+	bits := []uint8{}
+	shifter := TypeBits(1)
+	for i := 0; i < 64; i++ {
+		if val&shifter != 0 {
+			bits = append(bits, uint8(i))
+		}
+		shifter <<= 1
+	}
+	return bits
 }

@@ -25,7 +25,7 @@ func (e *Engine) Update(dt float32) {
 		sys.Begin(dt)
 		// TODO: Fix this :(
 		for ent := e.Scene.BeginEnt(); ent != nil; ent = e.Scene.NextEntity() {
-			if ent.TypeBits()&sys.TypeBits() == sys.TypeBits() {
+			if ent.TypeBits()&sys.TypeBits() > 0 {
 				sys.ProcessEntity(ent, dt)
 			}
 		}
