@@ -1,4 +1,4 @@
-package rend
+package rnd
 
 import (
 	"github.com/go-gl/gl"

@@ -1,4 +1,4 @@
-package rend
+package rnd
 
 import (
 	"github.com/tedsta/fission/core"
@@ -31,6 +31,8 @@ func NewSpriteComponent(fileName string, frames, framesPerRow int) *SpriteCompon
 	s := &SpriteComponent{}
 	s.Sprite = sf.NewSprite(sf.NewTextureFromFile(fileName))
 
+	sprSize := s.Sprite.Texture().Size()
+
 	// Calculate frame stuff
 	s.EndFrame = frames - 1
 	s.FrameStep = 1
@@ -41,8 +43,8 @@ func NewSpriteComponent(fileName string, frames, framesPerRow int) *SpriteCompon
 	s.framesPerRow = framesPerRow
 	s.animClock.Restart()
 
-	s.frameDim.X = s.Sprite.Texture().Size().X / float32(s.framesPerRow)
-	s.frameDim.Y = s.Sprite.Texture().Size().Y / float32(s.frames/s.framesPerRow)
+	s.frameDim.X = sprSize.X / float32(s.framesPerRow)
+	s.frameDim.Y = sprSize.Y / float32(s.frames/s.framesPerRow)
 
 	return s
 }

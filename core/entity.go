@@ -49,6 +49,10 @@ func (e *Entity) Id() int {
 	return e.id
 }
 
+func (e *Entity) TypeBits() TypeBits {
+	return e.typeBits
+}
+
 // entityEvent #################################################################
 
 // An event type for entity events.
