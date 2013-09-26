@@ -49,6 +49,14 @@ func (e *Entity) Components(typeBits TypeBits) []Component {
 	return cmpnts
 }
 
+// IsType returns true if the entity's type bits contain the type bits supplied
+// Example:
+// Sprite := TransformComponentType | SpriteComponentType
+// if e.IsType(Sprite) { /*e is a sprite*/ }
+func (e *Entity) IsType(t TypeBits) bool {
+	return e.typeBits&t == t
+}
+
 // Id returns the id of the entity
 func (e *Entity) Id() int {
 	return e.id
