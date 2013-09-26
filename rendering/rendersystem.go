@@ -10,12 +10,11 @@ import (
 const Ptu = 32.0
 
 type RenderSystem struct {
-	Window   *glfw.Window
-	Target   *sf.RenderTarget
-	typeBits core.TypeBits
+	Window *glfw.Window
+	Target *sf.RenderTarget
 }
 
-func NewRenderSystem(winTitle string, typeBits core.TypeBits) *RenderSystem {
+func NewRenderSystem(winTitle string) *RenderSystem {
 	if !glfw.Init() {
 		panic("Can't init glfw!")
 	}
@@ -29,7 +28,7 @@ func NewRenderSystem(winTitle string, typeBits core.TypeBits) *RenderSystem {
 
 	rt := sf.NewRenderTarget()
 
-	return &RenderSystem{w, rt, typeBits}
+	return &RenderSystem{w, rt}
 }
 
 func (r *RenderSystem) Begin(dt float32) {
@@ -41,9 +40,12 @@ func (r *RenderSystem) ProcessEntity(e *core.Entity, dt float32) {
 
 	rs := sf.RenderStates{sf.BlendAlpha, trans.T.Transform(), nil}
 
-	renderCmpnts := e.Components(SpriteComponentType | r.typeBits)
+	renderCmpnts := e.Components(RenderComponentType)
 	for _, cmpnt := range renderCmpnts {
-		cmpnt.(RenderComponent).Render(r.Target, rs)
+		render := cmpnt.(*RenderComponent).Render
+		if render != nil {
+			render(r.Target, rs)
+		}
 	}
 }
 
@@ -52,5 +54,5 @@ func (r *RenderSystem) End(dt float32) {
 }
 
 func (r *RenderSystem) TypeBits() core.TypeBits {
-	return TransformComponentType | SpriteComponentType | r.typeBits
+	return TransformComponentType | RenderComponentType
 }

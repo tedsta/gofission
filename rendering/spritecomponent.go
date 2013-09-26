@@ -1,14 +1,10 @@
 package rnd
 
 import (
-	"github.com/tedsta/fission/core"
 	"github.com/tedsta/gosfml"
 )
 
-// The type bits for SpriteComponent
-var SpriteComponentType = core.NextComponentType()
-
-type SpriteComponent struct {
+type spriteComponent struct {
 	Sprite *sf.Sprite
 	RelPos sf.Vector2 // The offset of the sprite in relation to the entity
 	RelRot float32    // The rotation of the sprite in relation to the entity
@@ -27,8 +23,8 @@ type SpriteComponent struct {
 	frameDim     sf.Vector2 // The sprite animation's frame dimensions
 }
 
-func NewSpriteComponent(fileName string, frames, framesPerRow int) *SpriteComponent {
-	s := &SpriteComponent{}
+func NewSpriteComponent(fileName string, frames, framesPerRow int) *RenderComponent {
+	s := &spriteComponent{}
 	s.Sprite = sf.NewSprite(sf.NewTextureFromFile(fileName))
 
 	sprSize := s.Sprite.Texture().Size()
@@ -46,14 +42,10 @@ func NewSpriteComponent(fileName string, frames, framesPerRow int) *SpriteCompon
 	s.frameDim.X = sprSize.X / float32(s.framesPerRow)
 	s.frameDim.Y = sprSize.Y / float32(s.frames/s.framesPerRow)
 
-	return s
+	return &RenderComponent{s.Render}
 }
 
-func (s *SpriteComponent) TypeBits() core.TypeBits {
-	return SpriteComponentType
-}
-
-func (s *SpriteComponent) Render(t *sf.RenderTarget, states sf.RenderStates) {
+func (s *spriteComponent) Render(t *sf.RenderTarget, states sf.RenderStates) {
 	if float32(s.animClock.ElapsedTime().Seconds()) >= s.FrameDelay &&
 		(s.LoopAnim || s.CurrentFrame != s.EndFrame) {
 
