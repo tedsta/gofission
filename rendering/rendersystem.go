@@ -14,21 +14,24 @@ type RenderSystem struct {
 	Target *sf.RenderTarget
 }
 
-func NewRenderSystem(winTitle string) *RenderSystem {
+func NewRenderSystem(sizeX, sizeY int, winTitle string) *RenderSystem {
 	if !glfw.Init() {
 		panic("Can't init glfw!")
 	}
 	gl.Init()
 
-	w, err := glfw.CreateWindow(800, 600, winTitle, nil, nil)
+	w, err := glfw.CreateWindow(sizeX, sizeY, winTitle, nil, nil)
 	if err != nil {
 		panic(err)
 	}
 	w.MakeContextCurrent()
 
-	rt := sf.NewRenderTarget()
+	rt := sf.NewRenderTarget(sf.Vector2{float32(sizeX), float32(sizeY)})
+	r := &RenderSystem{w, rt}
 
-	return &RenderSystem{w, rt}
+	w.SetFramebufferSizeCallback(r.onResize)
+
+	return r
 }
 
 func (r *RenderSystem) Begin(dt float32) {
@@ -55,4 +58,11 @@ func (r *RenderSystem) End(dt float32) {
 
 func (r *RenderSystem) TypeBits() core.TypeBits {
 	return TransformComponentType | RenderComponentType
+}
+
+// Callbacks ###################################################################
+
+func (r *RenderSystem) onResize(wnd *glfw.Window, w, h int) {
+	r.Target.Size.X = float32(w)
+	r.Target.Size.Y = float32(h)
 }

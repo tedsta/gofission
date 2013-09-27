@@ -15,11 +15,10 @@ func NewInputSystem(w *glfw.Window, e *event.Manager) *InputSystem {
 	i := &InputSystem{}
 
 	// Set the input callbacks
-	w.SetFramebufferSizeCallback((i).onResize)
-	w.SetMouseButtonCallback((i).onMouseBtn)
+	w.SetMouseButtonCallback(i.onMouseBtn)
 	//w.SetMouseWheelCallback((i).onMouseWheel)
-	w.SetKeyCallback((i).onKey)
-	w.SetCharacterCallback((i).onChar)
+	w.SetKeyCallback(i.onKey)
+	w.SetCharacterCallback(i.onChar)
 
 	i.window = w
 	i.eventManager = e
