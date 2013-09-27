@@ -16,13 +16,11 @@ func (t *TestEvent) Type() Type {
 type TestListener struct {
 }
 
-func (t *TestListener) Listen(ch chan Event) {
-	for event := range ch {
-		if test, ok := event.(*TestEvent); ok && test.myNum == 42 {
-			event.(*TestEvent).ch <- true
-		} else {
-			event.(*TestEvent).ch <- false
-		}
+func (t *TestListener) HandleEvent(event Event) {
+	if test, ok := event.(*TestEvent); ok && test.myNum == 42 {
+		event.(*TestEvent).ch <- true
+	} else {
+		event.(*TestEvent).ch <- false
 	}
 }
 
@@ -30,10 +28,10 @@ func TestEventManager(t *testing.T) {
 	eventManager := &Manager{}
 
 	testListener := &TestListener{}
-	eventManager.AddListener(0, testListener)
+	eventManager.AddHandler(0, testListener)
 
 	ch := make(chan bool)
-	eventManager.FireEvent(&TestEvent{42, ch})
+	go eventManager.FireEvent(&TestEvent{42, ch})
 	if !<-ch {
 		t.Fail()
 	}

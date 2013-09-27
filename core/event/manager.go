@@ -1,42 +1,44 @@
 package event
 
+import (
+	"sync"
+)
+
 type Manager struct {
-	lCounts  []int        // Listener counts for each event type
-	channels []chan Event // Channels for each event type
+	receivers [][]Handler
 }
 
 // AddHandler adds an event handler for a particular event type
-func (e *Manager) AddListener(eventType Type, l Listener) {
-	if int(eventType) >= len(e.lCounts) { // Check if we have enough room
-		// Resize arrays accordingly
-		newLCounts := make([]int, eventType+1)      // Counts
-		newChans := make([]chan Event, eventType+1) // Channels
-
-		copy(newLCounts, e.lCounts)
-		copy(newChans, e.channels)
-
-		e.lCounts = newLCounts
-		e.channels = newChans
-
-		// Create new count and channel
-		e.lCounts[eventType] = 1
-		e.channels[eventType] = make(chan Event, 1)
-	} else {
-		e.lCounts[eventType]++
-		e.channels[eventType] = make(chan Event, e.lCounts[eventType])
+func (e *Manager) AddHandler(eventType Type, handler Handler) {
+	if int(eventType) >= len(e.receivers) { // Check if we have enough room
+		// Resize the handler table accordingly
+		newRcv := make([][]Handler, eventType+1)
+		copy(newRcv, e.receivers)
+		e.receivers = newRcv
 	}
 
-	go l.Listen(e.channels[eventType])
+	// Make sure it's a valid event type
+	if int(eventType) < len(e.receivers) {
+		e.receivers[eventType] = append(e.receivers[eventType], handler)
+	}
 }
 
-// FireEvent fires an event to all listeners
+// FireEvent fires an event to all receivers receiving
+// Note: if the thread that calls this function communicates with any of the
+// callback methods via channels, this function needs to be called as a goroutine
 func (e *Manager) FireEvent(event Event) {
-	// No listeners for this event type
-	if len(e.lCounts) <= int(event.Type()) {
+	// No handlers for this event type
+	if len(e.receivers) <= int(event.Type()) {
 		return
 	}
 
-	for i := 0; i < e.lCounts[event.Type()]; i++ {
-		e.channels[event.Type()] <- event
+	var wg sync.WaitGroup
+	for _, receiver := range e.receivers[event.Type()] {
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			receiver.HandleEvent(event) // Why wait for events to get handled?
+		}(&wg)
 	}
+	wg.Wait()
 }
