@@ -11,8 +11,8 @@ type IntentComponent struct {
 	intent *IntentMapper
 }
 
-func NewIntentComponent() *IntentComponent {
-	intent := NewIntentMapper()
+func NewIntentComponent(evt *event.Manager) *IntentComponent {
+	intent := NewIntentMapper(evt)
 	return &IntentComponent{intent}
 }
 
@@ -35,9 +35,12 @@ type IntentMapper struct {
 	intents map[string]bool // Maps intent names to their state
 }
 
-func NewIntentMapper() *IntentMapper {
+func NewIntentMapper(evt *event.Manager) *IntentMapper {
 	intents := make(map[string]bool)
-	return &IntentMapper{[KeyLast]string{}, intents}
+
+	i := &IntentMapper{[KeyLast]string{}, intents}
+	evt.AddHandler(KeyEventType, i)
+	return i
 }
 
 func (i *IntentMapper) MapKeyToIntent(key Key, intent string) {

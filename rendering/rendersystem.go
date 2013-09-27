@@ -12,6 +12,7 @@ const Ptu = 32.0
 type RenderSystem struct {
 	Window *glfw.Window
 	Target *sf.RenderTarget
+	View   *sf.View
 }
 
 func NewRenderSystem(sizeX, sizeY int, winTitle string) *RenderSystem {
@@ -27,7 +28,8 @@ func NewRenderSystem(sizeX, sizeY int, winTitle string) *RenderSystem {
 	w.MakeContextCurrent()
 
 	rt := sf.NewRenderTarget(sf.Vector2{float32(sizeX), float32(sizeY)})
-	r := &RenderSystem{w, rt}
+	view := rt.DefaultView()
+	r := &RenderSystem{w, rt, &view}
 
 	w.SetFramebufferSizeCallback(r.onResize)
 
@@ -36,6 +38,7 @@ func NewRenderSystem(sizeX, sizeY int, winTitle string) *RenderSystem {
 
 func (r *RenderSystem) Begin(dt float32) {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+	r.Target.SetView(*r.View)
 }
 
 func (r *RenderSystem) ProcessEntity(e *core.Entity, dt float32) {
