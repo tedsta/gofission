@@ -8,13 +8,12 @@ import (
 var IntentComponentType = core.NextComponentType()
 
 type IntentComponent struct {
-	keyMap  [KeyLast]string // Maps key codes to intent names
-	intents map[string]bool // Maps intent names to their state
+	intent *IntentMapper
 }
 
 func NewIntentComponent() *IntentComponent {
-	intents := make(map[string]bool)
-	return &IntentComponent{[KeyLast]string{}, intents}
+	intent := NewIntentMapper()
+	return &IntentComponent{intent}
 }
 
 func (i *IntentComponent) TypeBits() core.TypeBits {
@@ -22,14 +21,34 @@ func (i *IntentComponent) TypeBits() core.TypeBits {
 }
 
 func (i *IntentComponent) MapKeyToIntent(key Key, intent string) {
-	i.keyMap[uint(key)] = intent
+	i.intent.MapKeyToIntent(key, intent)
 }
 
 func (i *IntentComponent) IntentActive(intent string) bool {
+	return i.intent.IntentActive(intent)
+}
+
+// IntentMapper ################################################################
+
+type IntentMapper struct {
+	keyMap  [KeyLast]string // Maps key codes to intent names
+	intents map[string]bool // Maps intent names to their state
+}
+
+func NewIntentMapper() *IntentMapper {
+	intents := make(map[string]bool)
+	return &IntentMapper{[KeyLast]string{}, intents}
+}
+
+func (i *IntentMapper) MapKeyToIntent(key Key, intent string) {
+	i.keyMap[uint(key)] = intent
+}
+
+func (i *IntentMapper) IntentActive(intent string) bool {
 	return i.intents[intent]
 }
 
-func (i *IntentComponent) HandleEvent(e event.Event) {
+func (i *IntentMapper) HandleEvent(e event.Event) {
 	switch e.Type() {
 	case KeyEventType:
 		ke := e.(*KeyEvent)
