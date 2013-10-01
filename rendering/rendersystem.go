@@ -10,9 +10,10 @@ import (
 const Ptu = 32.0
 
 type RenderSystem struct {
-	Window *glfw.Window
-	Target *sf.RenderTarget
-	View   *sf.View
+	Window  *glfw.Window
+	Target  *sf.RenderTarget
+	View    *sf.View
+	BgColor sf.Color // Background color
 }
 
 func NewRenderSystem(sizeX, sizeY int, winTitle string) *RenderSystem {
@@ -29,7 +30,7 @@ func NewRenderSystem(sizeX, sizeY int, winTitle string) *RenderSystem {
 
 	rt := sf.NewRenderTarget(sf.Vector2{float32(sizeX), float32(sizeY)})
 	view := rt.DefaultView()
-	r := &RenderSystem{w, rt, &view}
+	r := &RenderSystem{w, rt, &view, sf.Color{0, 0, 0, 0}}
 
 	w.SetFramebufferSizeCallback(r.onResize)
 
@@ -37,7 +38,7 @@ func NewRenderSystem(sizeX, sizeY int, winTitle string) *RenderSystem {
 }
 
 func (r *RenderSystem) Begin(dt float32) {
-	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+	r.Target.Clear(r.BgColor)
 	r.Target.SetView(*r.View)
 }
 
