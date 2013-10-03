@@ -24,6 +24,7 @@ func (t *TransformComponent) Serialize(p *core.Packet) {
 }
 
 func (t *TransformComponent) Deserialize(p *core.Packet) {
+
 }
 
 func (t *TransformComponent) TypeBits() core.TypeBits {

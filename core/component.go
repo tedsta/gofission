@@ -17,7 +17,7 @@ func NextComponentType() TypeBits {
 }
 
 type Component interface {
-	Serialize(p *Packet)
-	Deserialize(p *Packet)
+	Serialize(p *OutPacket)
+	Deserialize(p *InPacket)
 	TypeBits() TypeBits
 }
