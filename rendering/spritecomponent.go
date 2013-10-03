@@ -1,6 +1,7 @@
 package rnd
 
 import (
+	"github.com/tedsta/fission/core"
 	"github.com/tedsta/gosfml"
 )
 
@@ -24,7 +25,7 @@ type spriteComponent struct {
 }
 
 func NewSpriteComponent(fileName string, frames, framesPerRow int) *RenderComponent {
-	s := &spriteComponent{}
+	s := &spriteComponent{texturePath: fileName}
 	s.Sprite = sf.NewSprite(sf.NewTextureFromFile(fileName))
 
 	sprSize := s.Sprite.Texture().Size()
@@ -42,7 +43,13 @@ func NewSpriteComponent(fileName string, frames, framesPerRow int) *RenderCompon
 	s.frameDim.X = sprSize.X / float32(s.framesPerRow)
 	s.frameDim.Y = sprSize.Y / float32(s.frames/s.framesPerRow)
 
-	return &RenderComponent{s.Render}
+	return NewRenderComponent(s.Serialize, s.Deserialize, s.Render)
+}
+
+func (s *spriteComponent) Serialize(p *core.Packet) {
+}
+
+func (s *spriteComponent) Deserialize(p *core.Packet) {
 }
 
 func (s *spriteComponent) Render(t *sf.RenderTarget, states sf.RenderStates) {
