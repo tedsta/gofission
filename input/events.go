@@ -17,3 +17,27 @@ type KeyEvent struct {
 func (k *KeyEvent) Type() event.Type {
 	return KeyEventType
 }
+
+// MouseBtnEvent ####################################################################
+var MouseBtnEventType = event.NextId()
+
+type MouseBtnEvent struct {
+	Btn    MouseButton
+	Action Action
+	Mods   ModifierKey
+}
+
+func (m *MouseBtnEvent) Type() event.Type {
+	return MouseBtnEventType
+}
+
+// MouseMoveEvent ####################################################################
+var MouseMoveEventType = event.NextId()
+
+type MouseMoveEvent struct {
+	X, Y int
+}
+
+func (m *MouseMoveEvent) Type() event.Type {
+	return MouseMoveEventType
+}

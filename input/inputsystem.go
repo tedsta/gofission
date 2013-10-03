@@ -17,6 +17,7 @@ func NewInputSystem(w *glfw.Window, e *event.Manager) *InputSystem {
 	// Set the input callbacks
 	w.SetMouseButtonCallback(i.onMouseBtn)
 	//w.SetMouseWheelCallback((i).onMouseWheel)
+	w.SetCursorPositionCallback(i.onMouseMove)
 	w.SetKeyCallback(i.onKey)
 	w.SetCharacterCallback(i.onChar)
 
@@ -46,12 +47,18 @@ func (i *InputSystem) onResize(wnd *glfw.Window, w, h int) {
 	//fmt.Printf("resized: %dx%d\n", w, h)
 }
 
-func (i *InputSystem) onMouseBtn(w *glfw.Window, btn glfw.MouseButton, act glfw.Action, mod glfw.ModifierKey) {
-	//fmt.Printf("mouse button: %d, %d\n", btn, act)
+func (i *InputSystem) onMouseBtn(w *glfw.Window, btn glfw.MouseButton, action glfw.Action, mods glfw.ModifierKey) {
+	e := &MouseBtnEvent{MouseButton(btn), Action(action), ModifierKey(mods)}
+	i.eventManager.FireEvent(e)
 }
 
 func (i *InputSystem) onMouseWheel(w *glfw.Window, delta int) {
 	//fmt.Printf("mouse wheel: %d\n", delta)
+}
+
+func (i *InputSystem) onMouseMove(w *glfw.Window, xpos float64, ypos float64) {
+	e := &MouseMoveEvent{int(xpos), int(ypos)}
+	i.eventManager.FireEvent(e)
 }
 
 func (i *InputSystem) onKey(w *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
