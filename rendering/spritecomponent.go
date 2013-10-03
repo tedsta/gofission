@@ -46,10 +46,10 @@ func NewSpriteComponent(fileName string, frames, framesPerRow int) *RenderCompon
 	return NewRenderComponent(s.Serialize, s.Deserialize, s.Render)
 }
 
-func (s *spriteComponent) Serialize(p *core.Packet) {
+func (s *spriteComponent) Serialize(p *core.OutPacket) {
 }
 
-func (s *spriteComponent) Deserialize(p *core.Packet) {
+func (s *spriteComponent) Deserialize(p *core.InPacket) {
 }
 
 func (s *spriteComponent) Render(t *sf.RenderTarget, states sf.RenderStates) {

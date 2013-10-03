@@ -16,6 +16,12 @@ func NewIntentComponent(evt *event.Manager) *IntentComponent {
 	return &IntentComponent{intent}
 }
 
+func (i *IntentComponent) Serialize(p *core.OutPacket) {
+}
+
+func (i *IntentComponent) Deserialize(p *core.InPacket) {
+}
+
 func (i *IntentComponent) TypeBits() core.TypeBits {
 	return IntentComponentType
 }

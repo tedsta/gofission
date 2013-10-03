@@ -13,22 +13,22 @@ import (
 var RenderComponentType = core.NextComponentType()
 
 type RenderComponent struct {
-	serialize   func(*core.Packet)
-	deserialize func(*core.Packet)
+	serialize   func(*core.OutPacket)
+	deserialize func(*core.InPacket)
 	Render      func(*sf.RenderTarget, sf.RenderStates) // Render function
 }
 
-func NewRenderComponent(serialize, deserialize func(p *core.Packet),
+func NewRenderComponent(serialize func(p *core.OutPacket), deserialize func(p *core.InPacket),
 	render func(*sf.RenderTarget, sf.RenderStates)) *RenderComponent {
 
 	return &RenderComponent{serialize, deserialize, render}
 }
 
-func (r *RenderComponent) Serialize(p *core.Packet) {
+func (r *RenderComponent) Serialize(p *core.OutPacket) {
 	r.serialize(p)
 }
 
-func (r *RenderComponent) Deserialize(p *core.Packet) {
+func (r *RenderComponent) Deserialize(p *core.InPacket) {
 	r.deserialize(p)
 }
 
