@@ -58,6 +58,18 @@ func (e *Entity) IsType(t TypeBits) bool {
 }
 
 func (e *Entity) Serialize(p *OutPacket) {
+	var componentCount int
+	cp := NewOutPacket(nil) // Component packet
+	for i, _ := range e.components {
+		for j, _ := range e.components[i] {
+			componentCount++
+			cp.Write(e.components[i][j].TypeBits())
+			e.components[i][j].Serialize(cp)
+		}
+	}
+
+	p.Write(componentCount)
+	cp.buffer.WriteTo(p.buffer)
 }
 
 func (e *Entity) Deserialize(p *InPacket) {
