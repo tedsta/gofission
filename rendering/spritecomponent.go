@@ -47,9 +47,39 @@ func NewSpriteComponent(fileName string, frames, framesPerRow int) *RenderCompon
 }
 
 func (s *spriteComponent) Serialize(p *core.OutPacket) {
+	p.Write(s.RelPos)
+	p.Write(s.RelRot)
+
+	p.Write(s.CurrentFrame)
+	p.Write(s.StartFrame)
+	p.Write(s.EndFrame)
+	p.Write(s.FrameStep)
+	p.Write(s.FrameDelay)
+	p.Write(s.LoopAnim)
+
+	p.Write(s.texturePath)
+	p.Write(s.frames)
+	p.Write(s.framesPerRow)
+	p.Write(s.frameDim)
 }
 
 func (s *spriteComponent) Deserialize(p *core.InPacket) {
+	p.Read(&s.RelPos)
+	p.Read(&s.RelRot)
+
+	p.Read(&s.CurrentFrame)
+	p.Read(&s.StartFrame)
+	p.Read(&s.EndFrame)
+	p.Read(&s.FrameStep)
+	p.Read(&s.FrameDelay)
+	p.Read(&s.LoopAnim)
+
+	p.Read(&s.texturePath)
+	p.Read(&s.frames)
+	p.Read(&s.framesPerRow)
+	p.Read(&s.frameDim)
+
+	s.Sprite = sf.NewSprite(sf.NewTextureFromFile(s.texturePath))
 }
 
 func (s *spriteComponent) Render(t *sf.RenderTarget, states sf.RenderStates) {

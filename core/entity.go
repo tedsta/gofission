@@ -57,6 +57,12 @@ func (e *Entity) IsType(t TypeBits) bool {
 	return e.typeBits&t == t
 }
 
+func (e *Entity) Serialize(p *OutPacket) {
+}
+
+func (e *Entity) Deserialize(p *InPacket) {
+}
+
 // Id returns the id of the entity
 func (e *Entity) Id() int {
 	return e.id
