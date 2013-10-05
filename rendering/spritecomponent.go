@@ -5,7 +5,9 @@ import (
 	"github.com/tedsta/gosfml"
 )
 
-type spriteComponent struct {
+var SpriteComponentType core.TypeBits
+
+type SpriteComponent struct {
 	Sprite *sf.Sprite
 	RelPos sf.Vector2 // The offset of the sprite in relation to the entity
 	RelRot float32    // The rotation of the sprite in relation to the entity
@@ -24,8 +26,12 @@ type spriteComponent struct {
 	frameDim     sf.Vector2 // The sprite animation's frame dimensions
 }
 
-func NewSpriteComponent(fileName string, frames, framesPerRow int) *RenderComponent {
-	s := &spriteComponent{texturePath: fileName}
+func SpriteComponentFactory() core.Component {
+	return &SpriteComponent{}
+}
+
+func NewSpriteComponent(fileName string, frames, framesPerRow int) *SpriteComponent {
+	s := &SpriteComponent{texturePath: fileName}
 	s.Sprite = sf.NewSprite(sf.NewTextureFromFile(fileName))
 
 	sprSize := s.Sprite.Texture().Size()
@@ -43,11 +49,12 @@ func NewSpriteComponent(fileName string, frames, framesPerRow int) *RenderCompon
 	s.frameDim.X = sprSize.X / float32(s.framesPerRow)
 	s.frameDim.Y = sprSize.Y / float32(s.frames/s.framesPerRow)
 
-	return NewRenderComponent(s.Serialize, s.Deserialize, s.Render)
+	return s
 }
 
-func (s *spriteComponent) Serialize(p *core.OutPacket) {
-	p.Write(s.RelPos)
+func (s *SpriteComponent) Serialize(p *core.OutPacket) {
+	p.Write(s.RelPos.X)
+	p.Write(s.RelPos.Y)
 	p.Write(s.RelRot)
 
 	p.Write(s.CurrentFrame)
@@ -60,11 +67,13 @@ func (s *spriteComponent) Serialize(p *core.OutPacket) {
 	p.Write(s.texturePath)
 	p.Write(s.frames)
 	p.Write(s.framesPerRow)
-	p.Write(s.frameDim)
+	p.Write(s.frameDim.X)
+	p.Write(s.frameDim.Y)
 }
 
-func (s *spriteComponent) Deserialize(p *core.InPacket) {
-	p.Read(&s.RelPos)
+func (s *SpriteComponent) Deserialize(p *core.InPacket) {
+	p.Read(&s.RelPos.X)
+	p.Read(&s.RelPos.Y)
 	p.Read(&s.RelRot)
 
 	p.Read(&s.CurrentFrame)
@@ -77,12 +86,18 @@ func (s *spriteComponent) Deserialize(p *core.InPacket) {
 	p.Read(&s.texturePath)
 	p.Read(&s.frames)
 	p.Read(&s.framesPerRow)
-	p.Read(&s.frameDim)
+	p.Read(&s.frameDim.X)
+	p.Read(&s.frameDim.Y)
 
 	s.Sprite = sf.NewSprite(sf.NewTextureFromFile(s.texturePath))
+	s.animClock.Restart()
 }
 
-func (s *spriteComponent) Render(t *sf.RenderTarget, states sf.RenderStates) {
+func (s *SpriteComponent) TypeBits() core.TypeBits {
+	return SpriteComponentType
+}
+
+func (s *SpriteComponent) Render(t *sf.RenderTarget, states sf.RenderStates) {
 	if float32(s.animClock.ElapsedTime().Seconds()) >= s.FrameDelay &&
 		(s.LoopAnim || s.CurrentFrame != s.EndFrame) {
 

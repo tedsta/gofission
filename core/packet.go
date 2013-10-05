@@ -3,6 +3,7 @@ package core
 import (
 	"bytes"
 	"encoding/gob"
+	"io"
 )
 
 // OutPacket ###################################################################
@@ -19,8 +20,14 @@ func NewOutPacket(buffer *bytes.Buffer) *OutPacket {
 	return &OutPacket{buffer, gob.NewEncoder(buffer)}
 }
 
-func (p *OutPacket) Write(v interface{}) {
-	p.encoder.Encode(v)
+func (p *OutPacket) Write(v ...interface{}) {
+	for _, w := range v {
+		p.encoder.Encode(w)
+	}
+}
+
+func (p *OutPacket) WriteTo(w io.Writer) {
+	p.buffer.WriteTo(w)
 }
 
 // InPacket ####################################################################
@@ -36,6 +43,8 @@ func NewInPacket(buffer *bytes.Buffer) *InPacket {
 	return &InPacket{buffer, gob.NewDecoder(buffer)}
 }
 
-func (p *InPacket) Read(v interface{}) {
-	p.decoder.Decode(v)
+func (p *InPacket) Read(v ...interface{}) {
+	for _, w := range v {
+		p.decoder.Decode(w)
+	}
 }

@@ -9,14 +9,22 @@ func NextId() Id {
 	return nextId
 }
 
-type Manager struct {
-	res []interface{} // Resources
+var res []interface{} // Resources
+
+func Add(id Id, rc interface{}) {
+	if int(id) >= len(res) { // Check if we have enough room
+		// Resize the resource table accordingly
+		newRes := make([]interface{}, id+1)
+		copy(newRes, res)
+		res = newRes
+	}
+
+	res[id] = rc
 }
 
-func (m *Manager) Add(id Id, rc interface{}) {
-	m.res[id] = rc
-}
-
-func (m *Manager) Get(id Id) interface{} {
-	return m.res[id]
+func Get(id Id) interface{} {
+	if int(id) >= len(res) {
+		panic("Trying to access undefined resource.")
+	}
+	return res[id]
 }

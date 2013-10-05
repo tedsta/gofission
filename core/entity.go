@@ -44,7 +44,9 @@ func (e *Entity) Components(typeBits TypeBits) []Component {
 	cmpnts := []Component{}
 	indices := bitIndices(typeBits)
 	for _, i := range indices {
-		cmpnts = append(cmpnts, e.components[i]...)
+		if int(i) < len(e.components) {
+			cmpnts = append(cmpnts, e.components[i]...)
+		}
 	}
 	return cmpnts
 }
@@ -69,10 +71,22 @@ func (e *Entity) Serialize(p *OutPacket) {
 	}
 
 	p.Write(componentCount)
-	cp.buffer.WriteTo(p.buffer)
+	cp.WriteTo(p.buffer)
 }
 
 func (e *Entity) Deserialize(p *InPacket) {
+	var componentCount int
+	p.Read(&componentCount)
+	for i := 0; i < componentCount; i++ {
+		var typeBits TypeBits
+		p.Read(&typeBits)
+		cf := ComponentFactory(typeBits)
+		if cf != nil {
+			c := cf()
+			c.Deserialize(p)
+			e.AddComponent(c)
+		}
+	}
 }
 
 // Id returns the id of the entity

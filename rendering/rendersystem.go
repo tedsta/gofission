@@ -14,9 +14,10 @@ type RenderSystem struct {
 	Target  *sf.RenderTarget
 	View    *sf.View
 	BgColor sf.Color // Background color
+	optBits core.TypeBits
 }
 
-func NewRenderSystem(sizeX, sizeY int, winTitle string) *RenderSystem {
+func NewRenderSystem(sizeX, sizeY int, winTitle string, optBits core.TypeBits) *RenderSystem {
 	if !glfw.Init() {
 		panic("Can't init glfw!")
 	}
@@ -30,7 +31,7 @@ func NewRenderSystem(sizeX, sizeY int, winTitle string) *RenderSystem {
 
 	rt := sf.NewRenderTarget(sf.Vector2{float32(sizeX), float32(sizeY)})
 	view := rt.DefaultView()
-	r := &RenderSystem{w, rt, &view, sf.Color{0, 0, 0, 0}}
+	r := &RenderSystem{w, rt, &view, sf.Color{0, 0, 0, 0}, SpriteComponentType | optBits}
 
 	w.SetFramebufferSizeCallback(r.onResize)
 
@@ -47,9 +48,9 @@ func (r *RenderSystem) ProcessEntity(e *core.Entity, dt float32) {
 
 	rs := sf.RenderStates{sf.BlendAlpha, trans.T.Transform(), nil}
 
-	renderCmpnts := e.Components(RenderComponentType)
+	renderCmpnts := e.Components(r.optBits)
 	for _, cmpnt := range renderCmpnts {
-		render := cmpnt.(*RenderComponent).Render
+		render := cmpnt.(RenderComponent).Render
 		if render != nil {
 			render(r.Target, rs)
 		}
@@ -60,8 +61,15 @@ func (r *RenderSystem) End(dt float32) {
 	r.Window.SwapBuffers()
 }
 
-func (r *RenderSystem) TypeBits() core.TypeBits {
-	return TransformComponentType | RenderComponentType
+func (r *RenderSystem) TypeBits() (core.TypeBits, core.TypeBits) {
+	return TransformComponentType, r.optBits
+}
+
+// RegisterComponents ##########################################################
+
+func RegisterComponents() {
+	SpriteComponentType = core.RegisterComponent(SpriteComponentFactory)
+	TransformComponentType = core.RegisterComponent(TransformComponentFactory)
 }
 
 // Callbacks ###################################################################

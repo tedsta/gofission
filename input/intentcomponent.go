@@ -5,10 +5,14 @@ import (
 	"github.com/tedsta/fission/core/event"
 )
 
-var IntentComponentType = core.NextComponentType()
+var IntentComponentType core.TypeBits
 
 type IntentComponent struct {
 	intent *IntentMapper
+}
+
+func IntentComponentFactory() core.Component {
+	return &IntentComponent{}
 }
 
 func NewIntentComponent(evt *event.Manager) *IntentComponent {

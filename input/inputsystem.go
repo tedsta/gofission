@@ -37,8 +37,8 @@ func (i *InputSystem) ProcessEntity(e *core.Entity, dt float32) {
 func (i *InputSystem) End(dt float32) {
 }
 
-func (i *InputSystem) TypeBits() core.TypeBits {
-	return 0
+func (i *InputSystem) TypeBits() (core.TypeBits, core.TypeBits) {
+	return 0, 0
 }
 
 // Callbacks ###################################################################
@@ -68,4 +68,10 @@ func (i *InputSystem) onKey(w *glfw.Window, key glfw.Key, scancode int, action g
 
 func (i *InputSystem) onChar(w *glfw.Window, key uint) {
 	//fmt.Printf("char: %d\n", key)
+}
+
+// RegisterComponents ##########################################################
+
+func RegisterComponents() {
+	IntentComponentType = core.RegisterComponent(IntentComponentFactory)
 }

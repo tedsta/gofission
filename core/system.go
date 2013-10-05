@@ -8,7 +8,7 @@ type System interface {
 	Begin(dt float32)
 	ProcessEntity(e *Entity, dt float32)
 	End(dt float32)
-	TypeBits() TypeBits
+	TypeBits() (TypeBits, TypeBits)
 }
 
 type ActiveEntities struct {
