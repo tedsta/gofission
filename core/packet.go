@@ -26,6 +26,14 @@ func (p *OutPacket) Write(v ...interface{}) {
 	}
 }
 
+func (p *OutPacket) String() string {
+	return p.buffer.String()
+}
+
+func (p *OutPacket) Clear() {
+	p.buffer.Reset()
+}
+
 func (p *OutPacket) WriteTo(w io.Writer) {
 	p.buffer.WriteTo(w)
 }
@@ -47,4 +55,12 @@ func (p *InPacket) Read(v ...interface{}) {
 	for _, w := range v {
 		p.decoder.Decode(w)
 	}
+}
+
+func (p *InPacket) String() string {
+	return p.buffer.String()
+}
+
+func (p *InPacket) Clear() {
+	p.buffer.Reset()
 }

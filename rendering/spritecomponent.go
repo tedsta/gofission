@@ -39,7 +39,7 @@ func NewSpriteComponent(fileName string, frames, framesPerRow int) *SpriteCompon
 	// Calculate frame stuff
 	s.EndFrame = frames - 1
 	s.FrameStep = 1
-	s.FrameDelay = 0.1
+	s.FrameDelay = 0.125
 	s.LoopAnim = true
 
 	s.frames = frames
@@ -116,6 +116,8 @@ func (s *SpriteComponent) Render(t *sf.RenderTarget, states sf.RenderStates) {
 	frameY := float32(s.CurrentFrame/s.framesPerRow) * s.frameDim.Y
 
 	s.Sprite.SetTextureRect(sf.Rect{frameX, frameY, s.frameDim.X, s.frameDim.Y})
+
+	states.Transform.Translate(s.RelPos)
 
 	//states.transform.Combine(transform)
 	s.Sprite.Render(t, states)
