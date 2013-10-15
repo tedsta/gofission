@@ -9,24 +9,35 @@ import (
 var IntentComponentType core.TypeBits
 
 type IntentComponent struct {
-	intent *IntentMapper
+	inputMap       map[action]string // Maps input to intent names
+	intents        map[string]bool   // Maps intent names to their state
+	mouseX, mouseY int               // Mouse position
 }
 
 func IntentComponentFactory() core.Component {
-	return &IntentComponent{}
+	return NewIntentComponent()
 }
 
-func NewIntentComponent(evt *event.Manager, conn *Connection) *IntentComponent {
-	intent := NewIntentMapper(evt, conn)
-	return &IntentComponent{intent}
+func NewIntentComponent() *IntentComponent {
+	return &IntentComponent{inputMap: make(map[action]string), intents: make(map[string]bool)}
 }
 
 func (i *IntentComponent) Serialize(p *core.OutPacket) {
-	p.Write(i.intent.hndId)
+	p.Write(len(i.inputMap))
+	for k, v := range i.inputMap {
+		p.Write(k.inputType, k.value, k.state, v)
+	}
 }
 
 func (i *IntentComponent) Deserialize(p *core.InPacket) {
-	p.Read(&i.intent.hndId)
+	var c int
+	p.Read(&c)
+	for j := 0; j < c; j++ {
+		var a action
+		var s string
+		p.Read(&a.inputType, &a.value, &a.state, &s)
+		i.inputMap[a] = s
+	}
 }
 
 func (i *IntentComponent) TypeBits() core.TypeBits {
@@ -34,23 +45,26 @@ func (i *IntentComponent) TypeBits() core.TypeBits {
 }
 
 func (i *IntentComponent) MapKeyToIntent(key input.Key, state input.BtnState, intent string) {
-	i.intent.MapKeyToIntent(key, state, intent)
+	in := action{input.StickyKeys, int(key), state}
+	i.inputMap[in] = intent
+	i.intents[intent] = false
 }
 
 func (i *IntentComponent) MapMouseBtnToIntent(btn input.MouseButton, state input.BtnState, intent string) {
-	i.intent.MapMouseBtnToIntent(btn, state, intent)
-}
-
-func (i *IntentComponent) Finish() {
-	i.intent.Finish()
+	in := action{input.StickyMouseButtons, int(btn), state}
+	i.inputMap[in] = intent
+	i.intents[intent] = false
 }
 
 func (i *IntentComponent) IntentActive(intent string) bool {
-	return i.intent.IntentActive(intent)
+	if b, ok := i.intents[intent]; ok {
+		return b
+	}
+	return false
 }
 
 func (i *IntentComponent) MousePos() (x, y int) {
-	return i.intent.mouseX, i.intent.mouseY
+	return i.mouseX, i.mouseY
 }
 
 // IntentMapper ################################################################

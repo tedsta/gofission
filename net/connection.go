@@ -33,12 +33,12 @@ type Connection struct {
 	host              *enet.Host // The network host
 	peer              *Peer      // If it's a client connection, the peer
 	peers             []*Peer    // The list of clients if I'm a server
-	handlers          []PacketHandler
-	rcvScene          bool  // Whether or not the scene is being received.
-	rcvObjectCount    int   // Number of objects received if scene is being received.
-	totalObjectsToRcv int   // Number of objects to receive if the scene is being received.
-	nextId            NetId // The Id for the next peer
+	rcvScene          bool       // Whether or not the scene is being received.
+	rcvObjectCount    int        // Number of objects received if scene is being received.
+	totalObjectsToRcv int        // Number of objects to receive if the scene is being received.
+	nextId            NetId      // The Id for the next peer
 	onConnect         func(NetId)
+	handlers          []PacketHandler
 	onDisconnect      func(NetId)
 }
 
@@ -142,8 +142,6 @@ func (c *Connection) Update() {
 		case *enet.ReceiveEvent:
 			e := event.(*enet.ReceiveEvent)
 
-			buf := new(bytes.Buffer)
-			buf.Write([]byte(e.Data))
 			packet := core.NewInPacket(bytes.NewBufferString(e.Data))
 
 			var hndId int
@@ -183,6 +181,7 @@ func (c *Connection) Send(p *core.OutPacket, handler int, netId, excludeId NetId
 	// Handler ID packet
 	handPack := core.NewOutPacket(nil)
 	handPack.Write(handler)
+	handPack.Append(p)
 
 	if c.netType == Client {
 		c.peer.peer.Send(0, handPack.String()+p.String(), flags)

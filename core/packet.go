@@ -20,6 +20,10 @@ func NewOutPacket(buffer *bytes.Buffer) *OutPacket {
 	return &OutPacket{buffer, gob.NewEncoder(buffer)}
 }
 
+func (p *OutPacket) Append(p2 *OutPacket) {
+	p2.WriteTo(p.buffer)
+}
+
 func (p *OutPacket) Write(v ...interface{}) {
 	for _, w := range v {
 		p.encoder.Encode(w)

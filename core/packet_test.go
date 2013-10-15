@@ -21,6 +21,10 @@ func TestPacket(t *testing.T) {
 	out.Write(uint32(42))
 	out.Write(uint64(42))
 
+	out2 := NewOutPacket(nil)
+	out2.Write(int(84))
+	out.Append(out2)
+
 	var s string
 	var b byte
 	var r rune
@@ -34,6 +38,7 @@ func TestPacket(t *testing.T) {
 	var u16 uint16
 	var u32 uint32
 	var u64 uint64
+	var app int // Append tester
 
 	in := NewInPacket(out.buffer)
 	in.Read(&s)
@@ -49,6 +54,7 @@ func TestPacket(t *testing.T) {
 	in.Read(&u16)
 	in.Read(&u32)
 	in.Read(&u64)
+	in.Read(&app)
 
 	if s != "hello" {
 		t.Fail()
@@ -87,6 +93,9 @@ func TestPacket(t *testing.T) {
 		t.Fail()
 	}
 	if u64 != 42 {
+		t.Fail()
+	}
+	if app != 84 {
 		t.Fail()
 	}
 }
