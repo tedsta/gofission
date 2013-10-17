@@ -42,6 +42,10 @@ type Connection struct {
 	onDisconnect      func(NetId)
 }
 
+func NewFakeConnection() *Connection {
+	return &Connection{netType: None}
+}
+
 func NewServer(port int, onConnect, onDisconnect func(NetId)) (*Connection, error) {
 
 	c := &Connection{onConnect: onConnect, onDisconnect: onDisconnect}
@@ -112,6 +116,10 @@ func NewClient(ip string, port int, onConnect, onDisconnect func(NetId)) (*Conne
 }
 
 func (c *Connection) Update() {
+	if c.netType == None {
+		return
+	}
+
 	for i := 0; i < 100; i++ {
 		// Check for events, but don't wait
 		event := c.host.Wait(0)
@@ -172,6 +180,10 @@ func (c *Connection) Update() {
 }
 
 func (c *Connection) Send(p *core.OutPacket, handler int, netId, excludeId NetId, rel bool) {
+	if c.netType == None {
+		return
+	}
+
 	// Create the enet packet
 	var flags enet.Flag
 	if rel {

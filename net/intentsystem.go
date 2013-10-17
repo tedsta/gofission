@@ -21,7 +21,7 @@ type IntentSystem struct {
 func NewIntentSystem(conn *Connection, evt *event.Manager) *IntentSystem {
 	i := &IntentSystem{conn: conn, evt: evt}
 	i.hndId = conn.RegisterHandlerAuto(i.HandlePacket)
-	if conn.Type() == Client {
+	if conn.Type() == Client || conn.Type() == None {
 		evt.AddHandler(input.KeyEventType, i)
 		evt.AddHandler(input.MouseBtnEventType, i)
 		evt.AddHandler(input.MouseMoveEventType, i)
