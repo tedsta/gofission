@@ -2,7 +2,6 @@ package net
 
 import (
 	"encoding/gob"
-	"fmt"
 	"github.com/tedsta/fission/core"
 	"github.com/tedsta/fission/core/event"
 	"github.com/tedsta/fission/input"
@@ -132,7 +131,6 @@ func (i *IntentSystem) ProcessEntity(e *core.Entity, dt float32) {
 	// ###
 	// Packet handling
 	for _, p := range i.packets[intent.netId] {
-		fmt.Println("Processing: ", intent.netId)
 		var id int
 		p.Read(&id)
 		switch id {
@@ -218,7 +216,6 @@ func (i *IntentSystem) HandlePacket(p *core.InPacket) {
 	var netId NetId
 	p.Read(&netId)
 	i.packets[netId] = append(i.packets[netId], p)
-	fmt.Println("Got packet from:", netId)
 }
 
 // #############################################################################

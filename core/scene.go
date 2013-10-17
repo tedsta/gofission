@@ -33,6 +33,23 @@ func (s *Scene) RemoveEntity(id int) {
 	}
 }
 
+func (s *Scene) Serialize(p *OutPacket) {
+	p.Write(len(s.entities))
+	for _, e := range s.entities {
+		e.Serialize(p)
+	}
+}
+
+func (s *Scene) Deserialize(p *InPacket) {
+	var count int
+	p.Read(&count)
+	for i := 0; i < count; i++ {
+		e := new(Entity)
+		e.Deserialize(p)
+		s.AddEntity(e)
+	}
+}
+
 func (s *Scene) Save(fileName string) {
 
 }
