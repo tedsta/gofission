@@ -9,20 +9,24 @@ import (
 var IntentComponentType core.TypeBits
 
 type IntentComponent struct {
-	inputMap       map[action]string // Maps input to intent names
-	intents        map[string]bool   // Maps intent names to their state
-	mouseX, mouseY int               // Mouse position
+	netId          NetId
+	inputMap       map[action]string                     // Maps input to intent names
+	intents        map[string]bool                       // Maps intent names to their state
+	keyStates      [input.KeyLast]input.BtnState         // Key states
+	mouseStates    [input.MouseButtonLast]input.BtnState // Mouse states
+	mouseX, mouseY int                                   // Mouse position
 }
 
 func IntentComponentFactory() core.Component {
-	return NewIntentComponent()
+	return NewIntentComponent(0)
 }
 
-func NewIntentComponent() *IntentComponent {
-	return &IntentComponent{inputMap: make(map[action]string), intents: make(map[string]bool)}
+func NewIntentComponent(netId NetId) *IntentComponent {
+	return &IntentComponent{netId: netId, inputMap: make(map[action]string), intents: make(map[string]bool)}
 }
 
 func (i *IntentComponent) Serialize(p *core.OutPacket) {
+	p.Write(i.netId)
 	p.Write(len(i.inputMap))
 	for k, v := range i.inputMap {
 		p.Write(k.inputType, k.value, k.state, v)
@@ -30,6 +34,7 @@ func (i *IntentComponent) Serialize(p *core.OutPacket) {
 }
 
 func (i *IntentComponent) Deserialize(p *core.InPacket) {
+	p.Read(&i.netId)
 	var c int
 	p.Read(&c)
 	for j := 0; j < c; j++ {

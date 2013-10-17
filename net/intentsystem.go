@@ -2,6 +2,7 @@ package net
 
 import (
 	"encoding/gob"
+	"fmt"
 	"github.com/tedsta/fission/core"
 	"github.com/tedsta/fission/core/event"
 	"github.com/tedsta/fission/input"
@@ -11,15 +12,14 @@ type IntentSystem struct {
 	conn    *Connection
 	evt     *event.Manager
 	events  []event.Event
-	packets []*core.InPacket
+	packets map[NetId][]*core.InPacket
 
-	hndId       int
-	keyStates   [input.KeyLast]input.BtnState
-	mouseStates [input.MouseButtonLast]input.BtnState
+	hndId int
 }
 
 func NewIntentSystem(conn *Connection, evt *event.Manager) *IntentSystem {
 	i := &IntentSystem{conn: conn, evt: evt}
+	i.packets = make(map[NetId][]*core.InPacket)
 	i.hndId = conn.RegisterHandlerAuto(i.HandlePacket)
 	if conn.Type() == Client || conn.Type() == None {
 		evt.AddHandler(input.KeyEventType, i)
@@ -40,13 +40,13 @@ func (i *IntentSystem) ProcessEntity(e *core.Entity, dt float32) {
 	}
 
 	for k := 0; k < int(input.KeyLast); k++ {
-		if i.keyStates[k] == input.Pressed {
-			i.keyStates[k] = input.Down
-		} else if i.keyStates[k] == input.Released {
-			i.keyStates[k] = input.Up
+		if intent.keyStates[k] == input.Pressed {
+			intent.keyStates[k] = input.Down
+		} else if intent.keyStates[k] == input.Released {
+			intent.keyStates[k] = input.Up
 		}
 
-		in := action{input.StickyKeys, k, i.keyStates[k]}
+		in := action{input.StickyKeys, k, intent.keyStates[k]}
 
 		if _, ok := intent.inputMap[in]; ok {
 			intent.intents[intent.inputMap[in]] = true
@@ -54,13 +54,13 @@ func (i *IntentSystem) ProcessEntity(e *core.Entity, dt float32) {
 	}
 
 	for m := 0; m < int(input.MouseButtonLast); m++ {
-		if i.mouseStates[m] == input.Pressed {
-			i.mouseStates[m] = input.Down
-		} else if i.mouseStates[m] == input.Released {
-			i.mouseStates[m] = input.Up
+		if intent.mouseStates[m] == input.Pressed {
+			intent.mouseStates[m] = input.Down
+		} else if intent.mouseStates[m] == input.Released {
+			intent.mouseStates[m] = input.Up
 		}
 
-		in := action{input.StickyMouseButtons, m, i.mouseStates[m]}
+		in := action{input.StickyMouseButtons, m, intent.mouseStates[m]}
 
 		if _, ok := intent.inputMap[in]; ok {
 			intent.intents[intent.inputMap[in]] = true
@@ -69,67 +69,70 @@ func (i *IntentSystem) ProcessEntity(e *core.Entity, dt float32) {
 
 	// ###
 	// Event handling
-	for _, e := range i.events {
-		switch e.Type() {
-		case input.KeyEventType:
-			ke := e.(*input.KeyEvent)
+	if (i.conn.Type() == Client && i.conn.NetId() == intent.netId) || i.conn.Type() == None {
+		for _, e := range i.events {
+			switch e.Type() {
+			case input.KeyEventType:
+				ke := e.(*input.KeyEvent)
 
-			// Send it across the network
-			if ke.Action == input.Press || ke.Action == input.Release {
-				packet := core.NewOutPacket(nil)
-				packet.Write(KeyEvent, ke.Key, ke.Scancode, ke.Action, ke.Mods)
-				i.conn.Send(packet, i.hndId, 0, 0, false)
-			}
-
-			if ke.Action == input.Press {
-				i.keyStates[int(ke.Key)] = input.Pressed
-
-				in := action{input.StickyKeys, int(ke.Key), input.Pressed}
-				if _, ok := intent.inputMap[in]; ok {
-					intent.intents[intent.inputMap[in]] = true
+				// Send it across the network
+				if ke.Action == input.Press || ke.Action == input.Release {
+					packet := core.NewOutPacket(nil)
+					packet.Write(intent.netId, KeyEvent, ke.Key, ke.Scancode, ke.Action, ke.Mods)
+					i.conn.Send(packet, i.hndId, 0, 0, false)
 				}
-			} else if ke.Action == input.Release {
-				i.keyStates[int(ke.Key)] = input.Released
 
-				in := action{input.StickyKeys, int(ke.Key), input.Released}
-				if _, ok := intent.inputMap[in]; ok {
-					intent.intents[intent.inputMap[in]] = true
+				if ke.Action == input.Press {
+					intent.keyStates[int(ke.Key)] = input.Pressed
+
+					in := action{input.StickyKeys, int(ke.Key), input.Pressed}
+					if _, ok := intent.inputMap[in]; ok {
+						intent.intents[intent.inputMap[in]] = true
+					}
+				} else if ke.Action == input.Release {
+					intent.keyStates[int(ke.Key)] = input.Released
+
+					in := action{input.StickyKeys, int(ke.Key), input.Released}
+					if _, ok := intent.inputMap[in]; ok {
+						intent.intents[intent.inputMap[in]] = true
+					}
 				}
-			}
-		case input.MouseBtnEventType:
-			me := e.(*input.MouseBtnEvent)
+			case input.MouseBtnEventType:
+				me := e.(*input.MouseBtnEvent)
 
-			// Send it across the network
-			if me.Action == input.Press || me.Action == input.Release {
-				packet := core.NewOutPacket(nil)
-				packet.Write(KeyEvent, me.Btn, me.Action, me.Mods)
-				i.conn.Send(packet, i.hndId, 0, 0, false)
-			}
-
-			if me.Action == input.Press {
-				i.mouseStates[int(me.Btn)] = input.Pressed
-
-				in := action{input.StickyMouseButtons, int(me.Btn), input.Pressed}
-				if _, ok := intent.inputMap[in]; ok {
-					intent.intents[intent.inputMap[in]] = true
+				// Send it across the network
+				if me.Action == input.Press || me.Action == input.Release {
+					packet := core.NewOutPacket(nil)
+					packet.Write(intent.netId, MouseBtnEvent, me.Btn, me.Action, me.Mods)
+					i.conn.Send(packet, i.hndId, 0, 0, false)
 				}
-			} else if me.Action == input.Release {
-				i.mouseStates[int(me.Btn)] = input.Released
 
-				in := action{input.StickyMouseButtons, int(me.Btn), input.Released}
-				if _, ok := intent.inputMap[in]; ok {
-					intent.intents[intent.inputMap[in]] = true
+				if me.Action == input.Press {
+					intent.mouseStates[int(me.Btn)] = input.Pressed
+
+					in := action{input.StickyMouseButtons, int(me.Btn), input.Pressed}
+					if _, ok := intent.inputMap[in]; ok {
+						intent.intents[intent.inputMap[in]] = true
+					}
+				} else if me.Action == input.Release {
+					intent.mouseStates[int(me.Btn)] = input.Released
+
+					in := action{input.StickyMouseButtons, int(me.Btn), input.Released}
+					if _, ok := intent.inputMap[in]; ok {
+						intent.intents[intent.inputMap[in]] = true
+					}
 				}
+			case input.MouseMoveEventType:
+				me := e.(*input.MouseMoveEvent)
+				intent.mouseX, intent.mouseY = me.X, me.Y
 			}
-		case input.MouseMoveEventType:
-			me := e.(*input.MouseMoveEvent)
-			intent.mouseX, intent.mouseY = me.X, me.Y
 		}
 	}
 
 	// ###
 	// Packet handling
-	for _, p := range i.packets {
+	for _, p := range i.packets[intent.netId] {
+		fmt.Println("Processing: ", intent.netId)
 		var id int
 		p.Read(&id)
 		switch id {
@@ -140,15 +143,22 @@ func (i *IntentSystem) ProcessEntity(e *core.Entity, dt float32) {
 			var mods input.ModifierKey
 			p.Read(&key, &scancode, &act, &mods)
 
+			// Forward controls to other clients
+			if i.conn.Type() == Server && (act == input.Press || act == input.Release) {
+				packet := core.NewOutPacket(nil)
+				packet.Write(intent.netId, KeyEvent, key, scancode, act, mods)
+				i.conn.Send(packet, i.hndId, 0, intent.netId, false)
+			}
+
 			if act == input.Press {
-				i.keyStates[int(key)] = input.Pressed
+				intent.keyStates[int(key)] = input.Pressed
 
 				in := action{input.StickyKeys, int(key), input.Pressed}
 				if _, ok := intent.inputMap[in]; ok {
 					intent.intents[intent.inputMap[in]] = true
 				}
 			} else if act == input.Release {
-				i.keyStates[int(key)] = input.Released
+				intent.keyStates[int(key)] = input.Released
 
 				in := action{input.StickyKeys, int(key), input.Released}
 				if _, ok := intent.inputMap[in]; ok {
@@ -161,15 +171,22 @@ func (i *IntentSystem) ProcessEntity(e *core.Entity, dt float32) {
 			var mods input.ModifierKey
 			p.Read(&btn, &act, &mods)
 
+			// Forward controls to other clients
+			if i.conn.Type() == Server && (act == input.Press || act == input.Release) {
+				packet := core.NewOutPacket(nil)
+				packet.Write(intent.netId, MouseBtnEvent, btn, act, mods)
+				i.conn.Send(packet, i.hndId, 0, intent.netId, false)
+			}
+
 			if act == input.Press {
-				i.mouseStates[int(btn)] = input.Pressed
+				intent.mouseStates[int(btn)] = input.Pressed
 
 				in := action{input.StickyMouseButtons, int(btn), input.Pressed}
 				if _, ok := intent.inputMap[in]; ok {
 					intent.intents[intent.inputMap[in]] = true
 				}
 			} else if act == input.Release {
-				i.mouseStates[int(btn)] = input.Released
+				intent.mouseStates[int(btn)] = input.Released
 
 				in := action{input.StickyMouseButtons, int(btn), input.Released}
 				if _, ok := intent.inputMap[in]; ok {
@@ -186,7 +203,7 @@ func (i *IntentSystem) ProcessEntity(e *core.Entity, dt float32) {
 
 func (i *IntentSystem) End(dt float32) {
 	i.events = nil
-	i.packets = nil
+	i.packets = make(map[NetId][]*core.InPacket)
 }
 
 func (i *IntentSystem) TypeBits() (core.TypeBits, core.TypeBits) {
@@ -198,7 +215,10 @@ func (i *IntentSystem) HandleEvent(e event.Event) {
 }
 
 func (i *IntentSystem) HandlePacket(p *core.InPacket) {
-	i.packets = append(i.packets, p)
+	var netId NetId
+	p.Read(&netId)
+	i.packets[netId] = append(i.packets[netId], p)
+	fmt.Println("Got packet from:", netId)
 }
 
 // #############################################################################
