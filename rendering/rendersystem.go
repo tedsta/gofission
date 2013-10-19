@@ -1,7 +1,6 @@
 package rnd
 
 import (
-	"github.com/go-gl/gl"
 	glfw "github.com/go-gl/glfw3"
 	"github.com/tedsta/fission/core"
 	"github.com/tedsta/gosfml"
@@ -18,11 +17,6 @@ type RenderSystem struct {
 }
 
 func NewRenderSystem(sizeX, sizeY int, winTitle string, optBits core.TypeBits) *RenderSystem {
-	if !glfw.Init() {
-		panic("Can't init glfw!")
-	}
-	gl.Init()
-
 	w, err := glfw.CreateWindow(sizeX, sizeY, winTitle, nil, nil)
 	if err != nil {
 		panic(err)
@@ -65,9 +59,9 @@ func (r *RenderSystem) TypeBits() (core.TypeBits, core.TypeBits) {
 	return TransformComponentType, r.optBits
 }
 
-// RegisterComponents ##########################################################
+// init ##########################################################
 
-func RegisterComponents() {
+func init() {
 	SpriteComponentType = core.RegisterComponent(SpriteComponentFactory)
 	TransformComponentType = core.RegisterComponent(TransformComponentFactory)
 }

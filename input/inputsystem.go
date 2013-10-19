@@ -70,8 +70,8 @@ func (i *InputSystem) onChar(w *glfw.Window, key uint) {
 	//fmt.Printf("char: %d\n", key)
 }
 
-// RegisterComponents ##########################################################
+// init ##########################################################
 
-func RegisterComponents() {
+func init() {
 	IntentComponentType = core.RegisterComponent(IntentComponentFactory)
 }

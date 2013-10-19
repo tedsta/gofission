@@ -222,7 +222,7 @@ func (i *IntentSystem) HandlePacket(p *core.InPacket) {
 
 // #############################################################################
 
-func RegisterComponents() {
+func init() {
 	IntentComponentType = core.RegisterComponent(IntentComponentFactory)
 
 	gob.Register(action{})
