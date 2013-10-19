@@ -200,8 +200,10 @@ func (i *IntentSystem) ProcessEntity(e *core.Entity, dt float32) {
 }
 
 func (i *IntentSystem) End(dt float32) {
-	i.events = nil
-	i.packets = make(map[NetId][]*core.InPacket)
+	i.events = i.events[:0]
+	for k, _ := range i.packets {
+		i.packets[k] = i.packets[k][:0]
+	}
 }
 
 func (i *IntentSystem) TypeBits() (core.TypeBits, core.TypeBits) {
