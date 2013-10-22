@@ -1,30 +1,18 @@
 package rc
 
-type Id uint
+var res map[string]interface{} // Resources
 
-var nextId Id
-
-func NextId() Id {
-	defer func() { nextId++ }()
-	return nextId
+func Add(name string, rc interface{}) {
+	res[name] = rc
 }
 
-var res []interface{} // Resources
-
-func Add(id Id, rc interface{}) {
-	if int(id) >= len(res) { // Check if we have enough room
-		// Resize the resource table accordingly
-		newRes := make([]interface{}, id+1)
-		copy(newRes, res)
-		res = newRes
+func Get(name string) interface{} {
+	if rc, ok := res[name]; ok {
+		return rc
 	}
-
-	res[id] = rc
+	panic("Attempt to access undefined resource.")
 }
 
-func Get(id Id) interface{} {
-	if int(id) >= len(res) {
-		panic("Trying to access undefined resource.")
-	}
-	return res[id]
+func init() {
+	res = make(map[string]interface{})
 }
