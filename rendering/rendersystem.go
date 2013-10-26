@@ -69,6 +69,7 @@ func init() {
 // Callbacks ###################################################################
 
 func (r *RenderSystem) onResize(wnd *glfw.Window, w, h int) {
-	r.Target.Size.X = float32(w)
-	r.Target.Size.Y = float32(h)
+	r.Target.SetSize(sf.Vector2{float32(w), float32(h)})
+	r.Window.SetSize(w, h)
+	r.View.Reset(sf.Rect{0, 0, float32(w), float32(h)})
 }
